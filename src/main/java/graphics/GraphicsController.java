@@ -1,7 +1,8 @@
-package Graphics;
+package graphics;
 
-import Actors.GameObject;
+import actors.GameObject;
 import utils.Log;
+import utils.XmlHandler;
 
 import java.util.Map;
 import java.util.HashMap;
@@ -11,10 +12,12 @@ public class GraphicsController {
 
     private static final String TAG = "GraphicsController";
     private static Map<String, GameObject> graphicalItems;
+    private static String windowTitle;
 
 
     public static void init(){
         graphicalItems = new HashMap<>();
+        windowTitle = "Default Title";
         Log.send(Log.type.INFO, TAG, "Initialized.");
     }
 
@@ -37,6 +40,10 @@ public class GraphicsController {
             result = true;
         }
 
+        //temp
+        XmlHandler.ObjectToXml(obj);
+        //end temp
+
         return result;
     }
 
@@ -44,7 +51,19 @@ public class GraphicsController {
         return graphicalItems;
     }
 
+    /**
+     * Clears the contents of graphicalItems
+     */
     public static void clearGraphicalItems(){
         graphicalItems.clear();
+        Log.send(Log.type.INFO, TAG, "Graphics items cleared.");
+    }
+
+    public static String getWindowTitle() {
+        return windowTitle;
+    }
+
+    public static void setWindowTitle(String windowTitle) {
+        GraphicsController.windowTitle = windowTitle;
     }
 }

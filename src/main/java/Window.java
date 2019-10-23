@@ -1,5 +1,5 @@
-import Graphics.Board;
-import Graphics.GraphicsController;
+import graphics.Board;
+import graphics.GraphicsController;
 
 import java.awt.EventQueue;
 import javax.swing.JFrame;
@@ -18,7 +18,7 @@ public class Window extends JFrame {
 
         setSize(330, 330);
 
-        setTitle("Donut");
+        setTitle(GraphicsController.getWindowTitle());
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
     }

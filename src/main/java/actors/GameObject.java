@@ -1,4 +1,4 @@
-package Actors;
+package actors;
 
 import utils.Log;
 
@@ -9,14 +9,24 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 
+//For loading from XML
+import javax.xml.bind.annotation.*;
+
+@XmlAccessorType(XmlAccessType.FIELD)
+@XmlRootElement
 public class GameObject {
 
     private static final String TAG = "GameObject";
+    @XmlTransient
+    protected Image image;  //sprite
+
+    @XmlAttribute
+    protected String id;    //global access ID
+    @XmlElement
     protected int xPos, yPos; //position on Screen;
     protected int dX, dY; //movement axis
     protected int width, height; //heh
-    protected Image image;  //sprite
-    protected String id;    //global access ID
+    protected String imgFilename;
 
     /* Constructors */
 
@@ -29,6 +39,7 @@ public class GameObject {
         width = 10; height = 10;
         image = null;
         id = null;
+        imgFilename = null;
     }
 
     /**
@@ -44,6 +55,7 @@ public class GameObject {
         this.yPos = yPos;
         this.width = width;
         this.height = height;
+        this.id = id;
         dX = 0; dY = 0;
         image = null;
     }
@@ -62,6 +74,7 @@ public class GameObject {
         boolean loaded = false;
         try {
             BufferedImage img = ImageIO.read(file);
+            imgFilename = file.getPath();
             ImageIcon ii = new ImageIcon(img); //todo: is imageIcon even needed here?
             this.image = ii.getImage();
             if(matchSpriteSizeToImage){
@@ -76,6 +89,14 @@ public class GameObject {
     }
 
     /** Getters / Setters **/
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
     public int getxPos() {
         return xPos;
     }
@@ -122,13 +143,5 @@ public class GameObject {
 
     public void setHeight(int height) {
         this.height = height;
-    }
-
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
     }
 }
