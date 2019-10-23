@@ -40,15 +40,17 @@ public class GraphicsController {
             result = true;
         }
 
-        //temp
-        XmlHandler.ObjectToXml(obj);
-        //end temp
-
         return result;
     }
 
     public static Map<String, GameObject> getGraphicalItems() {
         return graphicalItems;
+    }
+
+    public static void exportAll(){
+        for(Map.Entry<String, GameObject> entry : graphicalItems.entrySet()){
+            XmlHandler.ObjectToXml(entry.getValue());
+        }
     }
 
     /**

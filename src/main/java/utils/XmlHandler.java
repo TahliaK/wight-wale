@@ -20,10 +20,11 @@ public class XmlHandler {
             marshallerObj.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
             FileOutputStream fOut = new FileOutputStream(PUT_DIR + gObj.getId() + ".xml");
             marshallerObj.marshal(gObj, fOut);
+            Log.send(Log.type.INFO, TAG, "Exported object id=" + gObj.getId());
         } catch (JAXBException _jEx) {
-            Log.send(Log.type.ERROR, TAG, _jEx.getMessage()); //Issue with JAXB
+            Log.send(Log.type.ERROR, TAG, "XML problem: " + _jEx.getMessage()); //Issue with JAXB
         } catch (FileNotFoundException _fNfEx) {
-            Log.send(Log.type.ERROR, TAG, _fNfEx.getMessage()); //File IO issue
+            Log.send(Log.type.ERROR, TAG, "File problem: " +  _fNfEx.getMessage()); //File IO issue
         } catch (NullPointerException _npEx) {
             Log.send(Log.type.ERROR, TAG, "Tried to output gameObject with" + //gameObject issue
                     " ID or object = null: " + _npEx.getMessage());

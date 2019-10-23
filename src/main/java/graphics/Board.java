@@ -26,6 +26,7 @@ public class Board extends JPanel {
         Boolean returnValue = gmOb.loadImageFrom(new File(filename), true);
         gmOb.setId("spaceship");
         GraphicsController.register(gmOb);
+        GraphicsController.exportAll();
 
         Log.send(Log.type.INFO, TAG, "LoadImage complete, result: " + returnValue);
     }
