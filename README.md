@@ -1,4 +1,4 @@
-# Wight-Wale
+# Wight-Whale
 This is a simple 2D Java game engine.
 
 ### Authors
