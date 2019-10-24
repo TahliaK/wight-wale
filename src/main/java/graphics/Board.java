@@ -1,5 +1,6 @@
 package graphics;
 import utils.Log;
+import utils.XmlHandler;
 import actors.GameObject;
 
 import java.awt.Graphics;
@@ -20,22 +21,19 @@ public class Board extends JPanel {
     }
 
     private void loadImages() {
-        String filename = "src/main/resources/spaceship.png";
-
-        GameObject gmOb = new GameObject();
-        Boolean returnValue = gmOb.loadImageFrom(new File(filename), true);
-        gmOb.setId("spaceship");
+        GameObject gmOb = (GameObject) XmlHandler.XmlToObject("GameObjects/spaceship.xml");
+        gmOb.loadImageFile(true);
         GraphicsController.register(gmOb);
-        GraphicsController.exportAll();
 
-        Log.send(Log.type.INFO, TAG, "LoadImage complete, result: " + returnValue);
+        Log.send(Log.type.INFO, TAG, "LoadImage complete.");
     }
 
     @Override
     public void paintComponent(Graphics g) {
         Map<String, GameObject> m = GraphicsController.getGraphicalItems();
         for(Map.Entry<String, GameObject> entry : m.entrySet()){
-            g.drawImage(entry.getValue().getImage(), 0, 0, null);
+            GameObject sprite = entry.getValue();
+            g.drawImage(sprite.getImage(), sprite.getxPos(), sprite.getyPos(), null);
             Log.send(Log.type.INFO, TAG, "Painting component id: " + entry.getValue().getId());
         }
     }

@@ -50,14 +50,15 @@ public class GameObject {
      * @param height object height in pixels
      * @param id object ID as a String
      */
-    public GameObject(int xPos, int yPos, int width, int height, String id){
+    public GameObject(int xPos, int yPos, int width, int height, String id, String imageFile){
         this.xPos = xPos;
         this.yPos = yPos;
         this.width = width;
         this.height = height;
         this.id = id;
         dX = 0; dY = 0;
-        image = null;
+        this.imgFilename = imageFile;
+        loadImageFrom(new File(imageFile), true);
     }
 
     /** Image loading **/
@@ -75,7 +76,7 @@ public class GameObject {
         try {
             BufferedImage img = ImageIO.read(file);
             imgFilename = file.getPath();
-            ImageIcon ii = new ImageIcon(img); //todo: is imageIcon even needed here?
+            ImageIcon ii = new ImageIcon(img); // is imageIcon even needed here? answer: yes
             this.image = ii.getImage();
             if(matchSpriteSizeToImage){
                 this.height = img.getHeight();
@@ -86,6 +87,10 @@ public class GameObject {
             Log.send(Log.type.ERROR, TAG, "Failed to load image from file " + file.getName());
         }
         return loaded;
+    }
+
+    public Boolean loadImageFile(Boolean matchSpriteSizeToImage){
+        return loadImageFrom(new File(imgFilename), matchSpriteSizeToImage);
     }
 
     /** Getters / Setters **/
@@ -143,5 +148,13 @@ public class GameObject {
 
     public void setHeight(int height) {
         this.height = height;
+    }
+
+    public String getImgFilename() {
+        return imgFilename;
+    }
+
+    public void setImgFilename(String imgFilename) {
+        this.imgFilename = imgFilename;
     }
 }
