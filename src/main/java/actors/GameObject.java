@@ -24,7 +24,6 @@ public class GameObject {
     protected String id;    //global access ID
     @XmlElement
     protected int xPos, yPos; //position on Screen;
-    protected int dX, dY; //movement axis
     protected int width, height; //heh
     protected String imgFilename;
 
@@ -35,7 +34,6 @@ public class GameObject {
      */
     public GameObject(){
         xPos = 0; yPos = 0;
-        dX = 0; dY = 0;
         width = 10; height = 10;
         image = null;
         id = null;
@@ -56,7 +54,6 @@ public class GameObject {
         this.width = width;
         this.height = height;
         this.id = id;
-        dX = 0; dY = 0;
         this.imgFilename = imageFile;
         loadImageFrom(new File(imageFile), true);
     }
@@ -85,6 +82,7 @@ public class GameObject {
             loaded = true;
         } catch (IOException _ex){
             Log.send(Log.type.ERROR, TAG, "Failed to load image from file " + file.getName());
+            _ex.printStackTrace();
         }
         return loaded;
     }
@@ -116,22 +114,6 @@ public class GameObject {
 
     public void setyPos(int yPos) {
         this.yPos = yPos;
-    }
-
-    public int getdX() {
-        return dX;
-    }
-
-    public void setdX(int dX) {
-        this.dX = dX;
-    }
-
-    public int getdY() {
-        return dY;
-    }
-
-    public void setdY(int dY) {
-        this.dY = dY;
     }
 
     public int getWidth() {
