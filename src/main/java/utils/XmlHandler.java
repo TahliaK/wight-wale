@@ -1,7 +1,6 @@
 package utils;
 import actors.GameObject;
 import graphics.GcElements;
-import graphics.GraphicsController;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -17,6 +16,10 @@ public class XmlHandler {
     public static String PUT_DIR = "Generated/";
     public static String FIND_DIR = "Files/";
 
+    /**
+     * Exports a GameObject as an XML document
+     * @param gObj
+     */
     public static void ObjectToXml(GameObject gObj) {
         try {
             JAXBContext contextObj = JAXBContext.newInstance(GameObject.class);
@@ -35,6 +38,10 @@ public class XmlHandler {
         }
     }
 
+    /**
+     * Export the current GameController parameters to XML
+     * @param gc GcElements object (used internally in GameController)
+     */
     public static void ObjectToXml(GcElements gc){
         try {
             JAXBContext contextObj = JAXBContext.newInstance(GcElements.class);
@@ -53,6 +60,11 @@ public class XmlHandler {
         }
     }
 
+    /**
+     * Imports a GameObject from a specified XML documnet
+     * @param filename filename of a file within the "Files/" directory
+     * @return the imported GameObject or null if none could be loaded
+     */
     public static GameObject XmlToGameObject(String filename) {
         GameObject out = null;
         try{
@@ -71,6 +83,11 @@ public class XmlHandler {
         return out;
     }
 
+    /**
+     * Imports GameController parameters from an XML document.
+     * The XML document MUST be located in "Files/GraphicsController.xml"
+     * @return GcElements object or null
+     */
     public static GcElements ImportGcElements() {
         GcElements out = null;
         try{

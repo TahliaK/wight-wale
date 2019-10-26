@@ -2,10 +2,13 @@ package actors;
 
 import java.awt.event.KeyEvent;
 
+/**
+ * GameObject with ability to move
+ */
 public class MovingObject extends GameObject {
 
     private static final String TAG = "MovingObject";
-    protected int dX = 0;
+    protected int dX = 0; //movement axis
     protected int dY = 0; //movement axis
     protected int stepSize = 2; //movement distance
 
@@ -15,11 +18,16 @@ public class MovingObject extends GameObject {
         stepSize = 2;
     }
 
+    /**
+     * Updates the current position based on current movement.
+     */
     public void step() {
         xPos += dX;
         yPos += dY;
     }
 
+    //response to direct key reactions
+    //will be made XML-adjustable shortly
     public void keyPressed(KeyEvent e) {
         int key = e.getKeyCode();
 

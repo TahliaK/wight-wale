@@ -1,6 +1,4 @@
 package graphics;
-
-//For loading from XML
 import javax.xml.bind.annotation.*;
 
 @XmlAccessorType(XmlAccessType.FIELD)

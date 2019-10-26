@@ -6,7 +6,6 @@ import actors.GameObject;
 
 import java.awt.Graphics;
 import java.awt.event.ActionListener;
-import java.io.File;
 import java.util.Map;
 import javax.swing.JPanel;
 

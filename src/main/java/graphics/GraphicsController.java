@@ -5,11 +5,8 @@ import actors.MovingObject;
 import utils.Log;
 import utils.XmlHandler;
 
-import java.awt.event.ActionListener;
 import java.util.Map;
 import java.util.HashMap;
-
-import javax.swing.Timer;
 
 public class GraphicsController {
 
@@ -19,8 +16,16 @@ public class GraphicsController {
     private static Board graphicsBoard = null;
     private static int stepSize = 1;
 
+    /** This can be used to halt & resume registered graphics processing **/
     public static boolean gameRunning = true;
 
+    /**
+     * This MUST be called before GraphicsController is used or you will
+     * get a lot of null pointer exceptions
+     *
+     * This automatically attempts to import settings from "Files/GraphicsController.xml"
+     * If there is no file found, it uses the defaults.
+     */
     public static void init(){
         graphicalItems = new HashMap<>();
         settings = XmlHandler.ImportGcElements();
@@ -39,7 +44,8 @@ public class GraphicsController {
     public static boolean register(GameObject obj){
         boolean result = false;
 
-        MovingObject mObj = new MovingObject();
+        //todo: save MovingObjects as MovingObjects, and GameObjects as GameObjects
+        MovingObject mObj = new MovingObject(); //temporary
         mObj.setHeight(obj.getHeight());
         mObj.setWidth(obj.getWidth());
         mObj.setId(obj.getId());
@@ -65,6 +71,7 @@ public class GraphicsController {
         return result;
     }
 
+    // getters and setters for graphicalItems list
     public static Map<String, MovingObject> getGraphicalItems() {
         return graphicalItems;
     }
@@ -77,10 +84,12 @@ public class GraphicsController {
      * Moves all sprites 1 step forward
      */
     public static void step() {
-        Map<String, MovingObject> m = GraphicsController.getGraphicalItems();
-        for(Map.Entry<String, MovingObject> entry : m.entrySet()){
-            MovingObject obj = entry.getValue();
-            obj.step();
+        if(gameRunning) {
+            Map<String, MovingObject> m = GraphicsController.getGraphicalItems();
+            for (Map.Entry<String, MovingObject> entry : m.entrySet()) {
+                MovingObject obj = entry.getValue();
+                obj.step();
+            }
         }
     }
 
@@ -102,20 +111,8 @@ public class GraphicsController {
     }
 
     /**
-     * Moves any moving sprites forward 1 step & repaints board
-     */
-    public static void step(Board b){
-        Log.send(Log.type.INFO, TAG, "step() triggered");
-        Map<String, MovingObject> m = GraphicsController.getGraphicalItems();
-        for(Map.Entry<String, MovingObject> entry : m.entrySet()){
-            MovingObject obj = entry.getValue();
-            obj.step();
-        }
-        b.repaint();
-    }
-
-    /**
      * Exports all graphical items currently rendering to XML documents.
+     * In "Generated/..." directory.
      */
     public static void exportAll(){
         for(Map.Entry<String, MovingObject> entry : graphicalItems.entrySet()){
@@ -172,6 +169,11 @@ public class GraphicsController {
         GraphicsController.graphicsBoard = graphicsBoard;
     }
 
+    /**
+     * Gives the number of miliseconds between graphics
+     * processing loops.
+     * @return 1000 / fps = miliseconds wait time
+     */
     public static int getStepSize() {
         return stepSize;
     }
