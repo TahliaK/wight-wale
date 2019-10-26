@@ -5,15 +5,21 @@ import actors.MovingObject;
 import utils.Log;
 import utils.XmlHandler;
 
+import java.awt.event.ActionListener;
 import java.util.Map;
 import java.util.HashMap;
+
+import javax.swing.Timer;
 
 public class GraphicsController {
 
     private static final String TAG = "GraphicsController";
     private static Map<String, MovingObject> graphicalItems;
     private static GcElements settings = null;
+    private static Board graphicsBoard = null;
+    private static int stepSize = 1;
 
+    public static boolean gameRunning = true;
 
     public static void init(){
         graphicalItems = new HashMap<>();
@@ -21,6 +27,7 @@ public class GraphicsController {
         if(settings == null) { // no import found
             settings = new GcElements(); //default value
         }
+        stepSize = 1000 / settings.fps; //fps into milsecond delay
         Log.send(Log.type.INFO, TAG, "Initialized successfully.");
     }
 
@@ -67,15 +74,44 @@ public class GraphicsController {
     }
 
     /**
-     * Moves any moving sprites forward 1 step
+     * Moves all sprites 1 step forward
      */
-    public static void step(){
+    public static void step() {
+        Map<String, MovingObject> m = GraphicsController.getGraphicalItems();
+        for(Map.Entry<String, MovingObject> entry : m.entrySet()){
+            MovingObject obj = entry.getValue();
+            obj.step();
+        }
+    }
+
+    /**
+     * Moves all sprites 1 step forward based on time in game loop
+     */
+    public static void step(double delta) {
+        Map<String, MovingObject> m = GraphicsController.getGraphicalItems();
+        for(Map.Entry<String, MovingObject> entry : m.entrySet()){
+            MovingObject obj = entry.getValue();
+            //adjusts distance of step
+            double xAxis = obj.getdX() * delta;
+            double yAxis = obj.getdY() * delta;
+            obj.setdX((int)xAxis);
+            obj.setdY((int)yAxis);
+            //
+            obj.step();
+        }
+    }
+
+    /**
+     * Moves any moving sprites forward 1 step & repaints board
+     */
+    public static void step(Board b){
         Log.send(Log.type.INFO, TAG, "step() triggered");
         Map<String, MovingObject> m = GraphicsController.getGraphicalItems();
         for(Map.Entry<String, MovingObject> entry : m.entrySet()){
             MovingObject obj = entry.getValue();
             obj.step();
         }
+        b.repaint();
     }
 
     /**
@@ -118,6 +154,30 @@ public class GraphicsController {
 
     public static void setWindowWidth(int windowWidth) {
         settings.windowWidth = windowWidth;
+    }
+
+    public static GcElements getSettings() {
+        return settings;
+    }
+
+    public static void setSettings(GcElements settings) {
+        GraphicsController.settings = settings;
+    }
+
+    public static Board getGraphicsBoard() {
+        return graphicsBoard;
+    }
+
+    public static void setGraphicsBoard(Board graphicsBoard) {
+        GraphicsController.graphicsBoard = graphicsBoard;
+    }
+
+    public static int getStepSize() {
+        return stepSize;
+    }
+
+    public static void setStepSize(int stepSize) {
+        GraphicsController.stepSize = stepSize;
     }
 }
 

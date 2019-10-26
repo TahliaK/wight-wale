@@ -3,7 +3,10 @@ import graphics.Board;
 import graphics.GraphicsController;
 
 import java.awt.EventQueue;
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
 import javax.swing.JFrame;
+import javax.swing.Timer;
 
 public class Window extends JFrame {
 
@@ -16,10 +19,6 @@ public class Window extends JFrame {
         initUI();
     }
 
-    public void repaint(){
-        b.repaint();
-    }
-
     private void initUI() {
 
         add(b);
@@ -29,13 +28,22 @@ public class Window extends JFrame {
         setTitle(GraphicsController.getWindowTitle());
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
+
+        Timer timer = new Timer(GraphicsController.getStepSize(), new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e){
+                GraphicsController.step();
+                b.repaint();
+            }
+        });
+
+        timer.start();
     }
 
     public static void main(String[] args) {
         EventQueue.invokeLater(() -> {
             Window ex = new Window();
             ex.setVisible(true);
-
         });
     }
 }

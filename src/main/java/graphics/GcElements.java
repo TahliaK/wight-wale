@@ -12,10 +12,13 @@ public class GcElements {
     public int windowHeight;
     @XmlElement
     public int windowWidth;
+    @XmlElement
+    public int fps;
 
     public GcElements() {
         windowTitle = "Default Title";
         windowHeight = 600; windowWidth = 900;
+        fps = 24;
     }
 
 }

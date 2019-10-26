@@ -16,10 +16,10 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 
 
-public class Board extends JPanel implements ActionListener {
+public class Board extends JPanel implements ActionListener{
 
     private String TAG = "Board";
-    private MovingObject player;
+    private MovingObject player; //1 object directly controlled by player
     private TAdapter keyListener;
 
     public Board() {
@@ -49,11 +49,7 @@ public class Board extends JPanel implements ActionListener {
         for(Map.Entry<String, MovingObject> entry : m.entrySet()){ //loop renders all graphics registered items
             MovingObject sprite = entry.getValue();
             g.drawImage(sprite.getImage(), sprite.getxPos(), sprite.getyPos(), null);
-            Log.send(Log.type.INFO, TAG, "Painting component id: " + entry.getValue().getId());
         }
-
-        if(player != null)  //draw player figure
-            g.drawImage(player.getImage(), player.getxPos(), player.getyPos(), null);
 
         Toolkit.getDefaultToolkit().sync();
     }
@@ -61,24 +57,19 @@ public class Board extends JPanel implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent e) {
         Log.send(Log.type.INFO, TAG, "ACTION PERFORMED.");
-        //GraphicsController.step();
-        //repaint();
     }
+
 
     private class TAdapter extends KeyAdapter {
 
         @Override
         public void keyReleased(KeyEvent e) {
             player.keyReleased(e);
-            GraphicsController.step();
-            repaint();
         }
 
         @Override
         public void keyPressed(KeyEvent e) {
             player.keyPressed(e);
-            GraphicsController.step();
-            repaint();
         }
     }
 }

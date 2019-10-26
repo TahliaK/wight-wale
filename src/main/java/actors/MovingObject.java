@@ -1,6 +1,5 @@
 package actors;
 
-import utils.Log;
 import java.awt.event.KeyEvent;
 
 public class MovingObject extends GameObject {
@@ -8,38 +7,37 @@ public class MovingObject extends GameObject {
     private static final String TAG = "MovingObject";
     protected int dX = 0;
     protected int dY = 0; //movement axis
+    protected int stepSize = 2; //movement distance
 
     public MovingObject(){
         super();
         dX = 0; dY = 0;
+        stepSize = 2;
     }
 
     public void step() {
         xPos += dX;
         yPos += dY;
-        Log.send(Log.type.INFO, TAG, "Location: " + xPos + ", " + yPos);
     }
 
     public void keyPressed(KeyEvent e) {
-        Log.send(Log.type.INFO, TAG, "Key pressed: " + e.getKeyCode() + " & " + KeyEvent.VK_RIGHT);
         int key = e.getKeyCode();
 
         if (key == KeyEvent.VK_LEFT) {
-            dX = -2;
+            dX = -stepSize;
         }
 
         if (key == KeyEvent.VK_RIGHT) {
-            Log.send(Log.type.INFO, TAG, "Right key pressed.");
-            dX = 2;
+            dX = stepSize;
 
         }
 
         if (key == KeyEvent.VK_UP) {
-            dY = -2;
+            dY = -stepSize;
         }
 
         if (key == KeyEvent.VK_DOWN) {
-            dY = 2;
+            dY = stepSize;
         }
     }
 
@@ -62,5 +60,29 @@ public class MovingObject extends GameObject {
         if (key == KeyEvent.VK_DOWN) {
             dY = 0;
         }
+    }
+
+    public int getdX() {
+        return dX;
+    }
+
+    public void setdX(int dX) {
+        this.dX = dX;
+    }
+
+    public int getdY() {
+        return dY;
+    }
+
+    public void setdY(int dY) {
+        this.dY = dY;
+    }
+
+    public int getStepSize() {
+        return stepSize;
+    }
+
+    public void setStepSize(int stepSize) {
+        this.stepSize = stepSize;
     }
 }

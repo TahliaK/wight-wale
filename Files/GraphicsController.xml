@@ -3,4 +3,5 @@
     <windowTitle>Demo</windowTitle>
     <windowHeight>400</windowHeight>
     <windowWidth>400</windowWidth>
+    <fps>24</fps>
 </gcElements>
