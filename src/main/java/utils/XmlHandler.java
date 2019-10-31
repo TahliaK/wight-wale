@@ -47,7 +47,7 @@ public class XmlHandler {
             JAXBContext contextObj = JAXBContext.newInstance(GcElements.class);
             Marshaller marshallerObj = contextObj.createMarshaller();
             marshallerObj.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
-            FileOutputStream fOut = new FileOutputStream(PUT_DIR + "GraphicsController.xml");
+            FileOutputStream fOut = new FileOutputStream(PUT_DIR + "GC_Settings.xml");
             marshallerObj.marshal(gc, fOut);
             Log.send(Log.type.INFO, TAG, "Exported object: GraphicsController");
         } catch (JAXBException _jEx) {
@@ -91,7 +91,7 @@ public class XmlHandler {
     public static GcElements ImportGcElements() {
         GcElements out = null;
         try{
-            File xmlSource = new File(FIND_DIR + "GraphicsController.xml");
+            File xmlSource = new File(FIND_DIR + "GC_Settings.xml");
             JAXBContext jaxbContext = JAXBContext.newInstance(GcElements.class);
             Unmarshaller jaxbUnmarshaller = jaxbContext.createUnmarshaller();
             out = (GcElements) jaxbUnmarshaller.unmarshal(xmlSource);

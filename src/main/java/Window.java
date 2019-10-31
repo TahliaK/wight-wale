@@ -11,10 +11,13 @@ import javax.swing.Timer;
 public class Window extends JFrame {
 
     private Board b;
+    private GraphicsController _gController;
 
     public Window() {
 
-        GraphicsController.init();
+        _gController = new GraphicsController();
+        _gController.init();
+        _gController.registerActive();
         b = new Board();
         initUI();
     }
@@ -23,18 +26,15 @@ public class Window extends JFrame {
 
         add(b);
 
-        setSize(GraphicsController.getWindowWidth(), GraphicsController.getWindowHeight());
+        setSize(_gController.getWindowWidth(), _gController.getWindowHeight());
 
-        setTitle(GraphicsController.getWindowTitle());
+        setTitle(_gController.getWindowTitle());
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
 
-        Timer timer = new Timer(GraphicsController.getStepSize(), new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e){
-                GraphicsController.step();
-                b.repaint();
-            }
+        Timer timer = new Timer(_gController.getStepSize(), e -> {
+            _gController.step();
+            b.repaint();
         });
 
         timer.start();

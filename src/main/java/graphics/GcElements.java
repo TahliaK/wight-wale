@@ -2,15 +2,15 @@ package graphics;
 import javax.xml.bind.annotation.*;
 
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlRootElement
+@XmlRootElement (name = "WindowSettings")
 public class GcElements {
-    @XmlElement
+    @XmlElement (name="Title")
     public String windowTitle;
-    @XmlElement
+    @XmlElement (name="Height")
     public int windowHeight;
-    @XmlElement
+    @XmlElement (name="Width")
     public int windowWidth;
-    @XmlElement
+    @XmlElement (name="FPS")
     public int fps;
 
     public GcElements() {

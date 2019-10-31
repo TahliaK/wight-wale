@@ -17,9 +17,10 @@ import java.awt.event.KeyEvent;
 
 public class Board extends JPanel implements ActionListener{
 
-    private String TAG = "Board";
+    private static String TAG = "Board";
     private MovingObject player; //1 object directly controlled by player
     private TAdapter keyListener;
+    private GraphicsController _gController;
 
     public Board() {
         initBoard();
@@ -30,21 +31,22 @@ public class Board extends JPanel implements ActionListener{
         addKeyListener(keyListener);
         setFocusable(true);
         requestFocusInWindow();
+        _gController = GraphicsController.activeController;
         loadImages();
     }
 
     private void loadImages() {
         GameObject gmOb = (GameObject) XmlHandler.XmlToGameObject("GameObjects/skeleton.xml");
         gmOb.loadImageFile(true);
-        GraphicsController.register(gmOb);
-        player = GraphicsController.getGraphicalItemsById(gmOb.getId());
+        _gController.register(gmOb);
+        player = _gController.getGraphicalItemsById(gmOb.getId());
 
         Log.send(Log.type.INFO, TAG, "LoadImage complete.");
     }
 
     @Override
     public void paintComponent(Graphics g) {
-        Map<String, MovingObject> m = GraphicsController.getGraphicalItems();
+        Map<String, MovingObject> m = _gController.getGraphicalItems();
         for(Map.Entry<String, MovingObject> entry : m.entrySet()){ //loop renders all graphics registered items
             MovingObject sprite = entry.getValue();
             g.drawImage(sprite.getImage(), sprite.getxPos(), sprite.getyPos(), null);
