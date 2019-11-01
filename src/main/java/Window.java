@@ -1,30 +1,37 @@
-import utils.Log;
 import graphics.Board;
+import graphics.GcElements;
 import graphics.GraphicsController;
+import utils.XmlHandler;
 
 import java.awt.EventQueue;
-import java.awt.event.ActionListener;
-import java.awt.event.ActionEvent;
 import javax.swing.JFrame;
 import javax.swing.Timer;
 
 public class Window extends JFrame {
 
-    private Board b;
+    private Board _board;
     private GraphicsController _gController;
+    private XmlHandler<GcElements>  gcXml;
 
     public Window() {
 
+        /* Set up GraphicsController */
         _gController = new GraphicsController();
         _gController.init();
         _gController.registerActive();
-        b = new Board();
+        /* Import GraphicsController settings */
+        gcXml = new XmlHandler<>(GcElements.class);
+        GcElements temp = gcXml.readFromXml("", "GC_Settings.xml");
+        if(temp != null)
+            _gController.setSettings(temp);
+        /* Initialise display */
+        _board = new Board();
         initUI();
     }
 
     private void initUI() {
 
-        add(b);
+        add(_board);
 
         setSize(_gController.getWindowWidth(), _gController.getWindowHeight());
 
@@ -34,7 +41,7 @@ public class Window extends JFrame {
 
         Timer timer = new Timer(_gController.getStepSize(), e -> {
             _gController.step();
-            b.repaint();
+            _board.repaint();
         });
 
         timer.start();

@@ -21,6 +21,7 @@ public class Board extends JPanel implements ActionListener{
     private MovingObject player; //1 object directly controlled by player
     private TAdapter keyListener;
     private GraphicsController _gController;
+    private XmlHandler<GameObject> GO_Xml;
 
     public Board() {
         initBoard();
@@ -33,10 +34,13 @@ public class Board extends JPanel implements ActionListener{
         requestFocusInWindow();
         _gController = GraphicsController.activeController;
         loadImages();
+        //XmlHandler.GraphicsControllerToXML(_gController);
     }
 
     private void loadImages() {
-        GameObject gmOb = (GameObject) XmlHandler.XmlToGameObject("GameObjects/skeleton.xml");
+        GameObject gmOb = new GameObject(); //= (GameObject) XmlHandler.XmlToGameObject("GameObjects/skeleton.xml");
+        GO_Xml = new XmlHandler<GameObject>(gmOb.getClass());
+        gmOb = GO_Xml.readFromXml("GameObjects", "skeleton.xml");
         gmOb.loadImageFile(true);
         _gController.register(gmOb);
         player = _gController.getGraphicalItemsById(gmOb.getId());

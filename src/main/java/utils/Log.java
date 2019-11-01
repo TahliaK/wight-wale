@@ -12,6 +12,7 @@ public class Log {
     public enum type{
         INFO,
         DEBUG,
+        WARNING,
         ERROR,
         VALUE
     }
@@ -52,6 +53,10 @@ public class Log {
                 break;
             case VALUE:
                 System.out.println("--" + t.toString() + "-- " + source + ": " + message);
+                break;
+            case WARNING:
+                System.out.println(stamp() + "## ## ## " + t.toString()
+                        + " ## ## ## " + source + ": " + message);
                 break;
         }
     } //end send

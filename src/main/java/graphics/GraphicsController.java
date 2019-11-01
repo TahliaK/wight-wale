@@ -5,35 +5,75 @@ import actors.MovingObject;
 import utils.Log;
 import utils.XmlHandler;
 
+import javax.xml.bind.annotation.*;
 import java.util.Map;
 import java.util.HashMap;
 
+@XmlAccessorType(XmlAccessType.FIELD)
+@XmlRootElement (name = "Graphics")
 public class GraphicsController {
 
+    // Global members
     private static final String TAG = "GraphicsController";
-    private static Map<String, MovingObject> graphicalItems;
-    private static GcElements settings = null;
-    private static Board graphicsBoard = null;
-    private static int stepSize = 1;
+    public static GraphicsController activeController = null;
 
-    /** This can be used to halt & resume registered graphics processing **/
-    public static boolean gameRunning = true;
+    // Instance members
+    @XmlElement
+    private Map<String, MovingObject> graphicalItems;
+    @XmlElement
+    private GcElements settings;
+    @XmlTransient
+    private int stepSize;
+    @XmlTransient
+    public boolean gameRunning;
+
+    public GraphicsController(){
+        stepSize = 1; //default time step, shouldn't really ever be used...
+        gameRunning = true;
+        settings = null;
+    }
 
     /**
-     * This MUST be called before GraphicsController is used or you will
-     * get a lot of null pointer exceptions
-     *
-     * This automatically attempts to import settings from "Files/GraphicsController.xml"
-     * If there is no file found, it uses the defaults.
+     * This initialises the class and, if found, imports settings from Files/GraphicsController.xml
      */
-    public static void init(){
+    public void init(){
         graphicalItems = new HashMap<>();
-        settings = XmlHandler.ImportGcElements();
+        settings = new GcElements();
+        /*settings = XmlHandler.ImportGcElements();
         if(settings == null) { // no import found
             settings = new GcElements(); //default value
-        }
+        } */
         stepSize = 1000 / settings.fps; //fps into milsecond delay
         Log.send(Log.type.INFO, TAG, "Initialized successfully.");
+    }
+
+    /**
+     * Clears stored graphics and removes activeController status
+     * if it has it
+     */
+    public void close(){
+        graphicalItems.clear();
+        settings = null;
+        if(activeController == this) {
+            activeController = null;
+        }
+        Log.send(Log.type.INFO, TAG, "Destroyed successfully.");
+    }
+
+    public void registerActive(){
+        if(activeController != this){
+            activeController = this;
+        } else {
+            Log.send(Log.type.WARNING, TAG, "Attempted to re-register active controller.");
+        }
+    }
+
+    public void deregisterActive(){
+        if(activeController == this){
+            activeController = null;
+        } else {
+            Log.send(Log.type.WARNING, TAG, "Attempted to de-register inactive controller.");
+        }
     }
 
     /**
@@ -41,7 +81,7 @@ public class GraphicsController {
      * @param obj the GameObject to display / use
      * @return success value; log output shows errors.
      */
-    public static boolean register(GameObject obj){
+    public boolean register(GameObject obj){
         boolean result = false;
 
         //todo: save MovingObjects as MovingObjects, and GameObjects as GameObjects
@@ -56,7 +96,7 @@ public class GraphicsController {
             Log.send(Log.type.ERROR, TAG, "Failed to register object; no ID assigned.");
         } else if(graphicalItems.containsKey(obj.getId())){
             if(graphicalItems.containsValue(obj)){
-                Log.send(Log.type.INFO, TAG, "Failed to register " + mObj.getId() +
+                Log.send(Log.type.WARNING, TAG, "Failed to register " + mObj.getId() +
                         ", object already registered.");
             } else {
                 Log.send(Log.type.ERROR, TAG, "Failed to register " + mObj.getId() +
@@ -71,21 +111,20 @@ public class GraphicsController {
         return result;
     }
 
-    // getters and setters for graphicalItems list
-    public static Map<String, MovingObject> getGraphicalItems() {
+    public Map<String, MovingObject> getGraphicalItems() {
         return graphicalItems;
     }
 
-    public static MovingObject getGraphicalItemsById(String id) {
+    public MovingObject getGraphicalItemsById(String id) {
         return graphicalItems.get(id);
     }
 
     /**
      * Moves all sprites 1 step forward
      */
-    public static void step() {
+    public void step() {
         if(gameRunning) {
-            Map<String, MovingObject> m = GraphicsController.getGraphicalItems();
+            Map<String, MovingObject> m = graphicalItems;
             for (Map.Entry<String, MovingObject> entry : m.entrySet()) {
                 MovingObject obj = entry.getValue();
                 obj.step();
@@ -96,8 +135,8 @@ public class GraphicsController {
     /**
      * Moves all sprites 1 step forward based on time in game loop
      */
-    public static void step(double delta) {
-        Map<String, MovingObject> m = GraphicsController.getGraphicalItems();
+    public void step(double delta) {
+        Map<String, MovingObject> m = graphicalItems;
         for(Map.Entry<String, MovingObject> entry : m.entrySet()){
             MovingObject obj = entry.getValue();
             //adjusts distance of step
@@ -105,7 +144,7 @@ public class GraphicsController {
             double yAxis = obj.getdY() * delta;
             obj.setdX((int)xAxis);
             obj.setdY((int)yAxis);
-            //
+            //end
             obj.step();
         }
     }
@@ -114,59 +153,51 @@ public class GraphicsController {
      * Exports all graphical items currently rendering to XML documents.
      * In "Generated/..." directory.
      */
-    public static void exportAll(){
+    public void exportAll(){
         for(Map.Entry<String, MovingObject> entry : graphicalItems.entrySet()){
-            XmlHandler.ObjectToXml(entry.getValue());
+            //XmlHandler.ObjectToXml(entry.getValue());
         }
     }
 
     /**
      * Clears the contents of graphicalItems
      */
-    public static void clearGraphicalItems(){
+    public void clearGraphicalItems(){
         graphicalItems.clear();
         Log.send(Log.type.INFO, TAG, "Graphics items cleared.");
     }
 
     /** Getters and setters **/
-    public static String getWindowTitle() {
+    public String getWindowTitle() {
         return settings.windowTitle;
     }
 
-    public static void setWindowTitle(String windowTitle) {
+    public void setWindowTitle(String windowTitle) {
         settings.windowTitle = windowTitle;
     }
 
-    public static int getWindowHeight() {
+    public int getWindowHeight() {
         return settings.windowHeight;
     }
 
-    public static void setWindowHeight(int windowHeight) {
+    public void setWindowHeight(int windowHeight) {
         settings.windowHeight = windowHeight;
     }
 
-    public static int getWindowWidth() {
+    public int getWindowWidth() {
         return settings.windowWidth;
     }
 
-    public static void setWindowWidth(int windowWidth) {
+    public void setWindowWidth(int windowWidth) {
         settings.windowWidth = windowWidth;
     }
 
-    public static GcElements getSettings() {
+    public GcElements getSettings() {
         return settings;
     }
 
-    public static void setSettings(GcElements settings) {
-        GraphicsController.settings = settings;
-    }
-
-    public static Board getGraphicsBoard() {
-        return graphicsBoard;
-    }
-
-    public static void setGraphicsBoard(Board graphicsBoard) {
-        GraphicsController.graphicsBoard = graphicsBoard;
+    public void setSettings(GcElements settings) {
+        this.settings = settings;
     }
 
     /**
@@ -174,12 +205,12 @@ public class GraphicsController {
      * processing loops.
      * @return 1000 / fps = miliseconds wait time
      */
-    public static int getStepSize() {
+    public int getStepSize() {
         return stepSize;
     }
 
-    public static void setStepSize(int stepSize) {
-        GraphicsController.stepSize = stepSize;
+    public void setStepSize(int stepSize) {
+        this.stepSize = stepSize;
     }
 }
 
