@@ -29,6 +29,18 @@ public class XmlHandler<T> {
     }
 
     /**
+     * Indicates if construction worked
+     * @return true if worked, false if not
+     */
+    public boolean status(){
+        if(jaxbContext != null){
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
      * Writes any XML-annotated item to a file
      * @param item the item to be written
      * @param dir Sub-directory within "Files/"
@@ -39,7 +51,12 @@ public class XmlHandler<T> {
             try {
                 Marshaller marshallerObj = jaxbContext.createMarshaller();
                 marshallerObj.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
-                FileOutputStream fOut = new FileOutputStream(PUT_DIR + dir + "/" + itemId + ".xml");
+                FileOutputStream fOut;
+                if(dir != "") {
+                    fOut = new FileOutputStream(PUT_DIR + dir + "/" + itemId + ".xml");
+                } else {
+                    fOut = new FileOutputStream(PUT_DIR + itemId + ".xml");
+                }
                 marshallerObj.marshal(item, fOut);
             } catch (JAXBException _jEx) {
                 Log.send(Log.type.ERROR, TAG, "XML problem: " + _jEx.getMessage()); //Issue with JAXB
@@ -63,7 +80,12 @@ public class XmlHandler<T> {
         T out = null;
         if (jaxbContext != null){
             try{
-                File xmlSource = new File(FIND_DIR + "/" + dir + "/" + filename);
+                File xmlSource;
+                if(dir == ""){
+                    xmlSource = new File(FIND_DIR + filename);
+                } else {
+                    xmlSource = new File(FIND_DIR + dir + "/" + filename);
+                }
                 Unmarshaller jaxbUnmarshaller = jaxbContext.createUnmarshaller();
                 out = (T) jaxbUnmarshaller.unmarshal(xmlSource);
             } catch (JAXBException _ex) {

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<Graphics>
+    <graphicalItems>
+        <entry>
+            <key>skeleton</key>
+            <value id="skeleton">
+                <xPos>0</xPos>
+                <yPos>0</yPos>
+                <width>24</width>
+                <height>30</height>
+                <imgFilename>Files/Images/Skeleton.png</imgFilename>
+                <dX>0</dX>
+                <dY>0</dY>
+                <stepSize>2</stepSize>
+            </value>
+        </entry>
+    </graphicalItems>
+    <settings>
+        <Title>Demo</Title>
+        <Height>400</Height>
+        <Width>400</Width>
+        <FPS>24</FPS>
+    </settings>
+</Graphics>
