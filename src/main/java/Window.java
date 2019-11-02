@@ -1,6 +1,7 @@
 import graphics.Board;
 import graphics.GcElements;
 import graphics.GraphicsController;
+import utils.Log;
 import utils.XmlHandler;
 
 import java.awt.EventQueue;
@@ -25,10 +26,15 @@ public class Window extends JFrame {
             _gController.setSettings(temp); */
         importer = new XmlHandler<>(GraphicsController.class);
         _gController = importer.readFromXml("", "GraphicsController.xml");
+        if(_gController == null){
+            _gController = new GraphicsController(true);
+            Log.send(Log.type.WARNING, "Window", "GraphicsController import not found.");
+        }
         _gController.registerActive();
         /* Initialise display */
         _board = new Board();
         initUI();
+        importer.writeToXml(_gController, "", "GraphicsController");
     }
 
     private void initUI() {

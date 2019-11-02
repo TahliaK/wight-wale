@@ -14,14 +14,12 @@ import javax.xml.bind.annotation.*;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlRootElement
-public class GameObject {
+public class GameObject extends AbstractGameObject {
 
     private static final String TAG = "GameObject";
     @XmlTransient
     protected Image image;  //sprite
 
-    @XmlAttribute
-    protected String id;    //global access ID
     @XmlElement
     protected int xPos, yPos; //position on Screen;
     protected int width, height; //heh
@@ -92,13 +90,6 @@ public class GameObject {
     }
 
     /** Getters / Setters **/
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
-    }
 
     public int getxPos() {
         return xPos;

@@ -1,15 +1,21 @@
 package actors;
 
 import java.awt.event.KeyEvent;
+import javax.xml.bind.annotation.*;
 
 /**
  * GameObject with ability to move
  */
+@XmlAccessorType(XmlAccessType.FIELD)
+@XmlRootElement
 public class MovingObject extends GameObject {
 
+    @XmlTransient
     private static final String TAG = "MovingObject";
+    @XmlTransient
     protected int dX = 0; //movement axis
     protected int dY = 0; //movement axis
+    @XmlElement (name = "moveDistance")
     protected int stepSize = 2; //movement distance
 
     public MovingObject(){

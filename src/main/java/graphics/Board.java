@@ -33,29 +33,36 @@ public class Board extends JPanel implements ActionListener{
         setFocusable(true);
         requestFocusInWindow();
         _gController = GraphicsController.activeController;
-        player = _gController.getGraphicalItemsById("skeleton");
-        player.loadImageFile(true);
-        //loadImages();
+        player = _gController.getMovingItemsById("skeleton");
+        //player.loadImageFile(true);
+        loadImages();
         //XmlHandler.GraphicsControllerToXML(_gController);
     }
 
     private void loadImages() { //only needed if not loading directly from GraphicsController.xml, will be removed
         GameObject gmOb = new GameObject();
         GO_Xml = new XmlHandler<GameObject>(gmOb.getClass());
-        gmOb = GO_Xml.readFromXml("GameObjects", "skeleton.xml");
+        //gmOb = GO_Xml.readFromXml("GameObjects", "skeleton.xml");
+        gmOb.setImgFilename("Files/Images/Skeleton.png");
+        gmOb.setId("skeleton");
         gmOb.loadImageFile(true);
         _gController.register(gmOb);
-        player = _gController.getGraphicalItemsById(gmOb.getId());
+        player = _gController.getMovingItemsById(gmOb.getId());
 
         Log.send(Log.type.INFO, TAG, "LoadImage complete.");
     }
 
     @Override
     public void paintComponent(Graphics g) {
-        Map<String, MovingObject> m = _gController.getGraphicalItems();
+        Map<String, MovingObject> m = _gController.getMovingItems();
         for(Map.Entry<String, MovingObject> entry : m.entrySet()){ //loop renders all graphics registered items
             MovingObject sprite = entry.getValue();
             g.drawImage(sprite.getImage(), sprite.getxPos(), sprite.getyPos(), null);
+        }
+        Map<String, GameObject> s = _gController.getStaticItems();
+        for(Map.Entry<String, GameObject> entry : s.entrySet()){
+            GameObject obj = entry.getValue();
+            g.drawImage(obj.getImage(), obj.getxPos(), obj.getyPos(), null);
         }
 
         Toolkit.getDefaultToolkit().sync();

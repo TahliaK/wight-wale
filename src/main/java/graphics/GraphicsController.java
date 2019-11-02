@@ -1,5 +1,6 @@
 package graphics;
 
+import actors.AbstractGameObject;
 import actors.GameObject;
 import actors.MovingObject;
 import utils.Log;
@@ -20,7 +21,9 @@ public class GraphicsController {
 
     // Instance members
     @XmlElement
-    private Map<String, MovingObject> graphicalItems;
+    private Map<String, MovingObject> movingItems;
+    @XmlElement
+    private Map<String, GameObject> staticItems;
     @XmlElement
     private GcElements settings;
     @XmlTransient
@@ -54,7 +57,8 @@ public class GraphicsController {
      * This initialises the class and, if found, imports settings from Files/GraphicsController.xml
      */
     public void init(boolean importSettings){
-        graphicalItems = new HashMap<>();
+        movingItems = new HashMap<>();
+        staticItems = new HashMap<>();
         if(importSettings) {
             importSettings();
         } else {
@@ -76,7 +80,7 @@ public class GraphicsController {
      * if it has it
      */
     public void close(){
-        graphicalItems.clear();
+        movingItems.clear();
         settings = null;
         if(activeController == this) {
             activeController = null;
@@ -118,8 +122,8 @@ public class GraphicsController {
 
         if(obj.getId() == null){
             Log.send(Log.type.ERROR, TAG, "Failed to register object; no ID assigned.");
-        } else if(graphicalItems.containsKey(obj.getId())){
-            if(graphicalItems.containsValue(obj)){
+        } else if(movingItems.containsKey(obj.getId())){
+            if(movingItems.containsValue(obj)){
                 Log.send(Log.type.WARNING, TAG, "Failed to register " + mObj.getId() +
                         ", object already registered.");
             } else {
@@ -127,7 +131,7 @@ public class GraphicsController {
                         ", ID already in use.");
             }
         } else {
-            graphicalItems.put(mObj.getId(), mObj);
+            movingItems.put(mObj.getId(), mObj);
             Log.send(Log.type.INFO, TAG, "Successfully registered " + mObj.getId());
             result = true;
         }
@@ -135,12 +139,24 @@ public class GraphicsController {
         return result;
     }
 
-    public Map<String, MovingObject> getGraphicalItems() {
-        return graphicalItems;
+    public Map<String, MovingObject> getMovingItems() {
+        return movingItems;
     }
 
-    public MovingObject getGraphicalItemsById(String id) {
-        return graphicalItems.get(id);
+    public MovingObject getMovingItemsById(String id) {
+        return movingItems.get(id);
+    }
+
+    public Map<String, GameObject> getStaticItems() {
+        return staticItems;
+    }
+
+    public void setStaticItems(Map<String, GameObject> staticItems) {
+        this.staticItems = staticItems;
+    }
+
+    public void setMovingItems(Map<String, MovingObject> movingItems){
+        this.movingItems = movingItems;
     }
 
     /**
@@ -148,7 +164,7 @@ public class GraphicsController {
      */
     public void step() {
         if(gameRunning) {
-            Map<String, MovingObject> m = graphicalItems;
+            Map<String, MovingObject> m = movingItems;
             for (Map.Entry<String, MovingObject> entry : m.entrySet()) {
                 MovingObject obj = entry.getValue();
                 obj.step();
@@ -160,7 +176,7 @@ public class GraphicsController {
      * Moves all sprites 1 step forward based on time in game loop
      */
     public void step(double delta) {
-        Map<String, MovingObject> m = graphicalItems;
+        Map<String, MovingObject> m = movingItems;
         for(Map.Entry<String, MovingObject> entry : m.entrySet()){
             MovingObject obj = entry.getValue();
             //adjusts distance of step
@@ -178,7 +194,7 @@ public class GraphicsController {
      * In "Generated/..." directory.
      */
     public void exportAll(){
-        for(Map.Entry<String, MovingObject> entry : graphicalItems.entrySet()){
+        for(Map.Entry<String, MovingObject> entry : movingItems.entrySet()){
             //XmlHandler.ObjectToXml(entry.getValue());
         }
     }
@@ -187,7 +203,7 @@ public class GraphicsController {
      * Clears the contents of graphicalItems
      */
     public void clearGraphicalItems(){
-        graphicalItems.clear();
+        movingItems.clear();
         Log.send(Log.type.INFO, TAG, "Graphics items cleared.");
     }
 
