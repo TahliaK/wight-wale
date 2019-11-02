@@ -10,6 +10,8 @@ import javax.xml.bind.annotation.XmlSeeAlso;
 public abstract class AbstractGameObject {
     @XmlElement
     protected String id;    //global access ID
+    @XmlElement
+    protected boolean visible;
 
     public String getId() {
         return id;
@@ -17,4 +19,6 @@ public abstract class AbstractGameObject {
     public void setId(String id) {
         this.id = id;
     }
+    public boolean isVisible() { return visible; }
+    public void setVisibility(boolean state) { this.visible = state; }
 }

@@ -34,6 +34,15 @@ public class Log {
         }
     }
 
+    public static void send(type t, String source, Exception ex){
+        if(t != type.ERROR){
+            send(t, source, ex.getMessage());
+        } else {
+            System.out.println("[[" + t.toString() + "]] " + source + ": " + ex.getMessage());
+            ex.printStackTrace();
+        }
+    }
+
     /**
      * Logs a message to Println with formatting.
      * @param t     log type (INFO, ERROR, DEBUG or VALUE)

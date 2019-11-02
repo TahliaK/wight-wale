@@ -1,6 +1,5 @@
 package graphics;
 
-import actors.AbstractGameObject;
 import actors.GameObject;
 import actors.MovingObject;
 import utils.Log;
@@ -35,6 +34,8 @@ public class GraphicsController {
         stepSize = 1; //default time step, shouldn't really ever be used...
         gameRunning = true;
         settings = null;
+        movingItems = new HashMap<>();
+        staticItems = new HashMap<>();
 
         if(settingsImporter == null)
             settingsImporter = new XmlHandler<GcElements>(new GcElements().getClass());
@@ -57,14 +58,29 @@ public class GraphicsController {
      * This initialises the class and, if found, imports settings from Files/GraphicsController.xml
      */
     public void init(boolean importSettings){
-        movingItems = new HashMap<>();
-        staticItems = new HashMap<>();
         if(importSettings) {
             importSettings();
-        } else {
+        } else if (settings == null){
             settings = new GcElements();
         }
         stepSize = 1000 / settings.fps; //fps into milsecond delay
+
+        if(!staticItems.isEmpty()){
+            Map<String, GameObject> g = staticItems;
+            for (Map.Entry<String, GameObject> entry : g.entrySet()) {
+                GameObject obj = entry.getValue();
+                obj.loadImageFile(false);
+            }
+        }
+
+        if(!movingItems.isEmpty()){
+            Map<String, MovingObject> m = movingItems;
+            for (Map.Entry<String, MovingObject> entry : m.entrySet()) {
+                MovingObject obj = entry.getValue();
+                obj.loadImageFile(true);
+            }
+        }
+
         Log.send(Log.type.INFO, TAG, "Initialized successfully.");
     }
 
@@ -109,21 +125,35 @@ public class GraphicsController {
      * @param obj the GameObject to display / use
      * @return success value; log output shows errors.
      */
-    public boolean register(GameObject obj){
+    public boolean registerStatic(GameObject obj){
         boolean result = false;
-
-        //todo: save MovingObjects as MovingObjects, and GameObjects as GameObjects
-        MovingObject mObj = new MovingObject(); //temporary
-        mObj.setHeight(obj.getHeight());
-        mObj.setWidth(obj.getWidth());
-        mObj.setId(obj.getId());
-        mObj.setImgFilename(obj.getImgFilename());
-        mObj.setImage(obj.getImage());
 
         if(obj.getId() == null){
             Log.send(Log.type.ERROR, TAG, "Failed to register object; no ID assigned.");
         } else if(movingItems.containsKey(obj.getId())){
             if(movingItems.containsValue(obj)){
+                Log.send(Log.type.WARNING, TAG, "Failed to register " + obj.getId() +
+                        ", object already registered.");
+            } else {
+                Log.send(Log.type.ERROR, TAG, "Failed to register " + obj.getId() +
+                        ", ID already in use.");
+            }
+        } else {
+            staticItems.put(obj.getId(), obj);
+            Log.send(Log.type.INFO, TAG, "Successfully registered " + obj.getId());
+            result = true;
+        }
+
+        return result;
+    }
+
+    public boolean registerMoving(MovingObject mObj){
+        boolean result = false;
+
+        if(mObj.getId() == null){
+            Log.send(Log.type.ERROR, TAG, "Failed to register object; no ID assigned.");
+        } else if(movingItems.containsKey(mObj.getId())){
+            if(movingItems.containsValue(mObj)){
                 Log.send(Log.type.WARNING, TAG, "Failed to register " + mObj.getId() +
                         ", object already registered.");
             } else {
@@ -135,7 +165,6 @@ public class GraphicsController {
             Log.send(Log.type.INFO, TAG, "Successfully registered " + mObj.getId());
             result = true;
         }
-
         return result;
     }
 
@@ -150,6 +179,8 @@ public class GraphicsController {
     public Map<String, GameObject> getStaticItems() {
         return staticItems;
     }
+
+    public GameObject getStaticItemsById(String id) { return staticItems.get(id); }
 
     public void setStaticItems(Map<String, GameObject> staticItems) {
         this.staticItems = staticItems;

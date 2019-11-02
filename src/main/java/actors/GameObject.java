@@ -1,5 +1,6 @@
 package actors;
 
+import utils.ImageUtils;
 import utils.Log;
 
 import javax.imageio.ImageIO;
@@ -76,11 +77,15 @@ public class GameObject extends AbstractGameObject {
             if(matchSpriteSizeToImage){
                 this.height = img.getHeight();
                 this.width = img.getWidth();
+            } else {
+                this.image = ImageUtils.scale(img, height, width);
             }
             loaded = true;
         } catch (IOException _ex){
             Log.send(Log.type.ERROR, TAG, "Failed to load image from file " + file.getName());
             _ex.printStackTrace();
+        } catch (ClassCastException _ex){
+            Log.send(Log.type.ERROR, TAG, "Scaling image return failed (this should... really not happen. Contact the dev.");
         }
         return loaded;
     }

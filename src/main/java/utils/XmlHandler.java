@@ -91,9 +91,11 @@ public class XmlHandler<T> {
             } catch (JAXBException _ex) {
                 Log.send(Log.type.ERROR, TAG, "XML error: " + _ex.getMessage()
                         + " (file: " + dir + "/" + filename + ")");
+                Log.send(Log.type.ERROR, TAG, _ex);
             } catch (Exception _ex) {
                 Log.send(Log.type.ERROR, TAG, "Couldn't load " + filename +
                         " reason: " + _ex.getMessage());
+                Log.send(Log.type.ERROR, TAG, _ex);
             }
         }
         return out;
