@@ -50,8 +50,17 @@ public class Board extends JPanel implements ActionListener{
         gmOb.setHeight(_gController.getWindowHeight());
         gmOb.setWidth(_gController.getWindowWidth());
         gmOb.loadImageFile(false);
+        gmOb.setVisibility(true);
         _gController.registerStatic(gmOb);
-        //player = _gController.getMovingItemsById(gmOb.getId());
+
+        MovingObject mvOb = new MovingObject();
+        mvOb.setImgFilename("Files/Images/Skeleton.png");
+        mvOb.setId("skeleton");
+        mvOb.loadImageFile(true);
+        mvOb.setVisibility(true);
+        _gController.registerMoving(mvOb);
+
+        player = _gController.getMovingItemsById(mvOb.getId());
 
         Log.send(Log.type.INFO, TAG, "LoadImage complete.");
     }

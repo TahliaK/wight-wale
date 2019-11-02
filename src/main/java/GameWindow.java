@@ -33,9 +33,7 @@ public class GameWindow extends JFrame {
     private void initUI() {
 
         add(_board);
-
         setSize(_gController.getWindowWidth(), _gController.getWindowHeight());
-
         setTitle(_gController.getWindowTitle());
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);

@@ -2,6 +2,7 @@ package graphics;
 
 import actors.GameObject;
 import actors.MovingObject;
+import levels.GameSegment;
 import utils.Log;
 import utils.XmlHandler;
 
@@ -19,10 +20,12 @@ public class GraphicsController {
     private static XmlHandler<GcElements> settingsImporter = null;
 
     // Instance members
+    //@XmlElement
+    //private Map<String, MovingObject> movingItems;
+    //@XmlElement
+    //private Map<String, GameObject> staticItems;
     @XmlElement
-    private Map<String, MovingObject> movingItems;
-    @XmlElement
-    private Map<String, GameObject> staticItems;
+    private GameSegment loadedArea;
     @XmlElement
     private GcElements settings;
     @XmlTransient
@@ -34,8 +37,9 @@ public class GraphicsController {
         stepSize = 1; //default time step, shouldn't really ever be used...
         gameRunning = true;
         settings = null;
-        movingItems = new HashMap<>();
-        staticItems = new HashMap<>();
+        //movingItems = new HashMap<>();
+        //staticItems = new HashMap<>();
+        loadedArea = new GameSegment();
 
         if(settingsImporter == null)
             settingsImporter = new XmlHandler<GcElements>(new GcElements().getClass());
@@ -65,16 +69,17 @@ public class GraphicsController {
         }
         stepSize = 1000 / settings.fps; //fps into milsecond delay
 
-        if(!staticItems.isEmpty()){
-            Map<String, GameObject> g = staticItems;
+
+        if(!loadedArea.getStaticItems().isEmpty()){
+            Map<String, GameObject> g = loadedArea.getStaticItems();
             for (Map.Entry<String, GameObject> entry : g.entrySet()) {
                 GameObject obj = entry.getValue();
                 obj.loadImageFile(false);
             }
         }
 
-        if(!movingItems.isEmpty()){
-            Map<String, MovingObject> m = movingItems;
+        if(!loadedArea.getMovingItems().isEmpty()){
+            Map<String, MovingObject> m = loadedArea.getMovingItems();
             for (Map.Entry<String, MovingObject> entry : m.entrySet()) {
                 MovingObject obj = entry.getValue();
                 obj.loadImageFile(true);
@@ -96,7 +101,6 @@ public class GraphicsController {
      * if it has it
      */
     public void close(){
-        movingItems.clear();
         settings = null;
         if(activeController == this) {
             activeController = null;
@@ -126,76 +130,42 @@ public class GraphicsController {
      * @return success value; log output shows errors.
      */
     public boolean registerStatic(GameObject obj){
-        boolean result = false;
-
-        if(obj.getId() == null){
-            Log.send(Log.type.ERROR, TAG, "Failed to register object; no ID assigned.");
-        } else if(movingItems.containsKey(obj.getId())){
-            if(movingItems.containsValue(obj)){
-                Log.send(Log.type.WARNING, TAG, "Failed to register " + obj.getId() +
-                        ", object already registered.");
-            } else {
-                Log.send(Log.type.ERROR, TAG, "Failed to register " + obj.getId() +
-                        ", ID already in use.");
-            }
-        } else {
-            staticItems.put(obj.getId(), obj);
-            Log.send(Log.type.INFO, TAG, "Successfully registered " + obj.getId());
-            result = true;
-        }
-
-        return result;
+        return loadedArea.registerStatic(obj);
     }
 
     public boolean registerMoving(MovingObject mObj){
-        boolean result = false;
-
-        if(mObj.getId() == null){
-            Log.send(Log.type.ERROR, TAG, "Failed to register object; no ID assigned.");
-        } else if(movingItems.containsKey(mObj.getId())){
-            if(movingItems.containsValue(mObj)){
-                Log.send(Log.type.WARNING, TAG, "Failed to register " + mObj.getId() +
-                        ", object already registered.");
-            } else {
-                Log.send(Log.type.ERROR, TAG, "Failed to register " + mObj.getId() +
-                        ", ID already in use.");
-            }
-        } else {
-            movingItems.put(mObj.getId(), mObj);
-            Log.send(Log.type.INFO, TAG, "Successfully registered " + mObj.getId());
-            result = true;
-        }
-        return result;
+        return loadedArea.registerMoving(mObj);
     }
 
     public Map<String, MovingObject> getMovingItems() {
-        return movingItems;
+        return loadedArea.getMovingItems();
     }
 
     public MovingObject getMovingItemsById(String id) {
-        return movingItems.get(id);
+        return loadedArea.getMovingItemsById(id);
     }
+
 
     public Map<String, GameObject> getStaticItems() {
-        return staticItems;
+        return loadedArea.getStaticItems();
     }
 
-    public GameObject getStaticItemsById(String id) { return staticItems.get(id); }
-
+    public GameObject getStaticItemsById(String id) { return loadedArea.getStaticItemsById(id); }
+/*
     public void setStaticItems(Map<String, GameObject> staticItems) {
         this.staticItems = staticItems;
     }
 
     public void setMovingItems(Map<String, MovingObject> movingItems){
         this.movingItems = movingItems;
-    }
+    } */
 
     /**
      * Moves all sprites 1 step forward
      */
     public void step() {
         if(gameRunning) {
-            Map<String, MovingObject> m = movingItems;
+            Map<String, MovingObject> m = loadedArea.getMovingItems();
             for (Map.Entry<String, MovingObject> entry : m.entrySet()) {
                 MovingObject obj = entry.getValue();
                 obj.step();
@@ -207,7 +177,7 @@ public class GraphicsController {
      * Moves all sprites 1 step forward based on time in game loop
      */
     public void step(double delta) {
-        Map<String, MovingObject> m = movingItems;
+        Map<String, MovingObject> m = loadedArea.getMovingItems();
         for(Map.Entry<String, MovingObject> entry : m.entrySet()){
             MovingObject obj = entry.getValue();
             //adjusts distance of step
@@ -225,17 +195,9 @@ public class GraphicsController {
      * In "Generated/..." directory.
      */
     public void exportAll(){
-        for(Map.Entry<String, MovingObject> entry : movingItems.entrySet()){
+        for(Map.Entry<String, MovingObject> entry : loadedArea.getMovingItems().entrySet()){
             //XmlHandler.ObjectToXml(entry.getValue());
         }
-    }
-
-    /**
-     * Clears the contents of graphicalItems
-     */
-    public void clearGraphicalItems(){
-        movingItems.clear();
-        Log.send(Log.type.INFO, TAG, "Graphics items cleared.");
     }
 
     /** Getters and setters **/
