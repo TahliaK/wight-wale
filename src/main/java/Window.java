@@ -11,19 +11,21 @@ public class Window extends JFrame {
 
     private Board _board;
     private GraphicsController _gController;
-    private XmlHandler<GcElements>  gcXml;
+    //private XmlHandler<GcElements>  gcXml;
+    private static XmlHandler<GraphicsController> importer;
 
     public Window() {
 
         /* Set up GraphicsController */
-        _gController = new GraphicsController();
-        _gController.init();
-        _gController.registerActive();
-        /* Import GraphicsController settings */
+        _gController = new GraphicsController(false);
+        /* Import GraphicsController settings */ /*
         gcXml = new XmlHandler<>(GcElements.class);
         GcElements temp = gcXml.readFromXml("", "GC_Settings.xml");
         if(temp != null)
-            _gController.setSettings(temp);
+            _gController.setSettings(temp); */
+        importer = new XmlHandler<>(GraphicsController.class);
+        _gController = importer.readFromXml("", "GraphicsController.xml");
+        _gController.registerActive();
         /* Initialise display */
         _board = new Board();
         initUI();

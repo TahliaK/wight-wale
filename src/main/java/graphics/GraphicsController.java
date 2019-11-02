@@ -16,6 +16,7 @@ public class GraphicsController {
     // Global members
     private static final String TAG = "GraphicsController";
     public static GraphicsController activeController = null;
+    private static XmlHandler<GcElements> settingsImporter;
 
     // Instance members
     @XmlElement
@@ -31,20 +32,37 @@ public class GraphicsController {
         stepSize = 1; //default time step, shouldn't really ever be used...
         gameRunning = true;
         settings = null;
+        settingsImporter = new XmlHandler<GcElements>(new GcElements().getClass());
+        init(false);
+    }
+
+    public GraphicsController(boolean importSettings){
+        stepSize = 1;
+        gameRunning = true;
+        settings = null;
+        settingsImporter = new XmlHandler<GcElements>(new GcElements().getClass());
+        init(importSettings);
     }
 
     /**
      * This initialises the class and, if found, imports settings from Files/GraphicsController.xml
      */
-    public void init(){
+    public void init(boolean importSettings){
         graphicalItems = new HashMap<>();
-        settings = new GcElements();
-        /*settings = XmlHandler.ImportGcElements();
-        if(settings == null) { // no import found
-            settings = new GcElements(); //default value
-        } */
+        if(importSettings) {
+            importSettings();
+        } else {
+            settings = new GcElements();
+        }
         stepSize = 1000 / settings.fps; //fps into milsecond delay
         Log.send(Log.type.INFO, TAG, "Initialized successfully.");
+    }
+
+    private void importSettings(){
+        settings = settingsImporter.readFromXml("", "GC_Settings.xml");
+        if (settings == null) { // no import found
+            settings = new GcElements(); //default value
+        }
     }
 
     /**

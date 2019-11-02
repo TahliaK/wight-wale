@@ -17,6 +17,7 @@ public class XmlHandler<T> {
     public static String PUT_DIR = "Generated/";
     public static String FIND_DIR = "Files/";
 
+    /* Marshalling is cheap, jaxbContext is not - reuse when possible */
     private JAXBContext jaxbContext;
 
     public <T> XmlHandler(Class<T> type){
@@ -36,7 +37,6 @@ public class XmlHandler<T> {
         if(jaxbContext != null){
             return true;
         }
-
         return false;
     }
 

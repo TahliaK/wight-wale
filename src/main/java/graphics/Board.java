@@ -33,12 +33,14 @@ public class Board extends JPanel implements ActionListener{
         setFocusable(true);
         requestFocusInWindow();
         _gController = GraphicsController.activeController;
-        loadImages();
+        player = _gController.getGraphicalItemsById("skeleton");
+        player.loadImageFile(true);
+        //loadImages();
         //XmlHandler.GraphicsControllerToXML(_gController);
     }
 
-    private void loadImages() {
-        GameObject gmOb = new GameObject(); //= (GameObject) XmlHandler.XmlToGameObject("GameObjects/skeleton.xml");
+    private void loadImages() { //only needed if not loading directly from GraphicsController.xml, will be removed
+        GameObject gmOb = new GameObject();
         GO_Xml = new XmlHandler<GameObject>(gmOb.getClass());
         gmOb = GO_Xml.readFromXml("GameObjects", "skeleton.xml");
         gmOb.loadImageFile(true);
