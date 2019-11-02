@@ -17,7 +17,7 @@ public class Window extends JFrame {
     public Window() {
 
         /* Set up GraphicsController */
-        _gController = new GraphicsController(false);
+        _gController = new GraphicsController();
         /* Import GraphicsController settings */ /*
         gcXml = new XmlHandler<>(GcElements.class);
         GcElements temp = gcXml.readFromXml("", "GC_Settings.xml");

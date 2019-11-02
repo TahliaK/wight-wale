@@ -16,7 +16,7 @@ public class GraphicsController {
     // Global members
     private static final String TAG = "GraphicsController";
     public static GraphicsController activeController = null;
-    private static XmlHandler<GcElements> settingsImporter;
+    private static XmlHandler<GcElements> settingsImporter = null;
 
     // Instance members
     @XmlElement
@@ -32,7 +32,10 @@ public class GraphicsController {
         stepSize = 1; //default time step, shouldn't really ever be used...
         gameRunning = true;
         settings = null;
-        settingsImporter = new XmlHandler<GcElements>(new GcElements().getClass());
+
+        if(settingsImporter == null)
+            settingsImporter = new XmlHandler<GcElements>(new GcElements().getClass());
+
         init(false);
     }
 
@@ -40,7 +43,10 @@ public class GraphicsController {
         stepSize = 1;
         gameRunning = true;
         settings = null;
-        settingsImporter = new XmlHandler<GcElements>(new GcElements().getClass());
+
+        if(settingsImporter == null)
+            settingsImporter = new XmlHandler<GcElements>(new GcElements().getClass());
+
         init(importSettings);
     }
 
