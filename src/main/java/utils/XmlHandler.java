@@ -100,4 +100,23 @@ public class XmlHandler<T> {
         }
         return out;
     }
+
+    public <T> T readFromXml(File xmlSource){
+        T out = null;
+        if (jaxbContext != null) {
+            try {
+                Unmarshaller jaxbUnmarshaller = jaxbContext.createUnmarshaller();
+                out = (T) jaxbUnmarshaller.unmarshal(xmlSource);
+            } catch (JAXBException _ex) {
+                Log.send(Log.type.ERROR, TAG, "XML error: " + _ex.getMessage()
+                        + " (file: " + xmlSource.getPath() + ")");
+                Log.send(Log.type.ERROR, TAG, _ex);
+            } catch (Exception _ex) {
+                Log.send(Log.type.ERROR, TAG, "Couldn't load " + xmlSource.getPath() +
+                        " reason: " + _ex.getMessage());
+                Log.send(Log.type.ERROR, TAG, _ex);
+            }
+        }
+        return out;
+    }
 }

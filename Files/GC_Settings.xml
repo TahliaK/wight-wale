@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <WindowSettings>
     <Title>Demo</Title>
-    <Height>400</Height>
-    <Width>400</Width>
+    <Height>500</Height>
+    <Width>500</Width>
     <FPS>24</FPS>
 </WindowSettings>

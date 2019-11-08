@@ -3,31 +3,32 @@ package graphics;
 import actors.GameObject;
 import actors.MovingObject;
 import levels.GameSegment;
+import levels.LevelController;
 import utils.Log;
 import utils.XmlHandler;
 
 import javax.xml.bind.annotation.*;
 import java.util.Map;
-import java.util.HashMap;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlRootElement (name = "Graphics")
 public class GraphicsController {
 
     // Global members
+    @XmlTransient
     private static final String TAG = "GraphicsController";
     public static GraphicsController activeController = null;
+    public static LevelController activeLevel = null;
     private static XmlHandler<GcElements> settingsImporter = null;
+    private static XmlHandler<LevelController> levelImporter = null;
 
     // Instance members
-    //@XmlElement
-    //private Map<String, MovingObject> movingItems;
-    //@XmlElement
-    //private Map<String, GameObject> staticItems;
     @XmlElement
     private GameSegment loadedArea;
     @XmlElement
     private GcElements settings;
+    @XmlElement
+    private LevelController levelController;
     @XmlTransient
     private int stepSize;
     @XmlTransient
@@ -37,12 +38,19 @@ public class GraphicsController {
         stepSize = 1; //default time step, shouldn't really ever be used...
         gameRunning = true;
         settings = null;
-        //movingItems = new HashMap<>();
-        //staticItems = new HashMap<>();
-        loadedArea = new GameSegment();
+        try{
+            loadedArea = activeLevel.getSegment(0, 0);
+        } catch (NullPointerException _ex){
+            loadedArea = new GameSegment();
+        }
 
         if(settingsImporter == null)
-            settingsImporter = new XmlHandler<GcElements>(new GcElements().getClass());
+            settingsImporter = new XmlHandler<>(GcElements.class);
+
+        if(levelImporter == null)
+            levelImporter = new XmlHandler<>(LevelController.class);
+
+        levelController = LevelController.activeController;
 
         init(false);
     }
@@ -62,28 +70,31 @@ public class GraphicsController {
      * This initialises the class and, if found, imports settings from Files/GraphicsController.xml
      */
     public void init(boolean importSettings){
+
+        Log.send(Log.type.DEBUG, TAG, "Init for item: " + this.toString());
+
         if(importSettings) {
             importSettings();
-        } else if (settings == null){
-            settings = new GcElements();
-        }
-        stepSize = 1000 / settings.fps; //fps into milsecond delay
-
-
-        if(!loadedArea.getStaticItems().isEmpty()){
-            Map<String, GameObject> g = loadedArea.getStaticItems();
-            for (Map.Entry<String, GameObject> entry : g.entrySet()) {
-                GameObject obj = entry.getValue();
-                obj.loadImageFile(false);
+            Log.send(Log.type.INFO, TAG, "Settings imported.");
+        } else {
+            if (settings == null){
+                settings = new GcElements();
+                Log.send(Log.type.INFO, TAG, "No import settings found, using defaults.");
             }
         }
+        stepSize = 1000 / settings.fps; //fps into millisecond delay
 
-        if(!loadedArea.getMovingItems().isEmpty()){
-            Map<String, MovingObject> m = loadedArea.getMovingItems();
-            for (Map.Entry<String, MovingObject> entry : m.entrySet()) {
-                MovingObject obj = entry.getValue();
-                obj.loadImageFile(true);
+        if(levelController == null){
+            if (activeLevel != null){
+                levelController = activeLevel;
+                loadLevelImages();
+            } else {
+                Log.send(Log.type.WARNING, TAG, "GraphicsController init() called without levelController assigned.");
             }
+        } else {
+            loadedArea = levelController.getSegment(0, 0);
+            loadLevelImages();
+            Log.send(Log.type.INFO, TAG, "Game segment loaded: " + loadedArea.getId());
         }
 
         Log.send(Log.type.INFO, TAG, "Initialized successfully.");
@@ -93,6 +104,32 @@ public class GraphicsController {
         settings = settingsImporter.readFromXml("", "GC_Settings.xml");
         if (settings == null) { // no import found
             settings = new GcElements(); //default value
+        }
+    }
+
+    public void loadLevelImages(){
+
+        if(loadedArea == null){
+            loadedArea = levelController.getSegment(0, 0);
+        }
+
+        if(!loadedArea.getStaticItems().isEmpty()){
+            Map<String, GameObject> g = loadedArea.getStaticItems();
+            for (Map.Entry<String, GameObject> entry : g.entrySet()) {
+                GameObject obj = entry.getValue();
+                obj.loadImageFile(false);
+            }
+            Log.send(Log.type.INFO, TAG, "Static sprites loaded.");
+        }
+
+
+        if(!loadedArea.getMovingItems().isEmpty()){
+            Map<String, MovingObject> m = loadedArea.getMovingItems();
+            for (Map.Entry<String, MovingObject> entry : m.entrySet()) {
+                MovingObject obj = entry.getValue();
+                obj.loadImageFile(true);
+            }
+            Log.send(Log.type.INFO, TAG, "Moving sprites loaded.");
         }
     }
 
@@ -244,6 +281,14 @@ public class GraphicsController {
 
     public void setStepSize(int stepSize) {
         this.stepSize = stepSize;
+    }
+
+    public LevelController getLevelController() {
+        return levelController;
+    }
+
+    public void setLevelController(LevelController levelController) {
+        this.levelController = levelController;
     }
 }
 

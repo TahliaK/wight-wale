@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <gameObject id="skeleton">
-    <xPos>200</xPos>
-    <yPos>51</yPos>
+    <xPos>128</xPos>
+    <yPos>56</yPos>
     <dX>0</dX>
     <dY>0</dY>
     <width>20</width>

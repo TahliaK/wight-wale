@@ -30,7 +30,7 @@ public class Log {
             send(t, source, is);
         } else {
             System.out.println("--" + t.toString() + "-- " + source + ": " + message
-                    + ". Should be: " + shouldbe + " / is: " + is);
+                    + ". Should be: " + shouldbe + " & is: " + is);
         }
     }
 

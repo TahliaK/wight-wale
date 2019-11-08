@@ -1,5 +1,6 @@
 import graphics.Board;
 import graphics.GraphicsController;
+import levels.LevelController;
 import utils.Log;
 import utils.XmlHandler;
 
@@ -11,19 +12,20 @@ public class GameWindow extends JFrame {
 
     private Board _board;
     private GraphicsController _gController;
+    private LevelController _lController;
     public XmlHandler<GraphicsController> importer;
 
     public GameWindow() {
 
+        /* Import LevelController */
+        _lController = LevelController.createFromXml("./Files/Levels", 2, 2);
+
         /* Import GraphicsController settings */
-        importer = new XmlHandler<>(GraphicsController.class);
-        _gController = importer.readFromXml("", "GraphicsController.xml");
-        if(_gController == null){ //if none found, use defaults & attempt to import GC_Settings.xml
+        GraphicsController.activeLevel = _lController;
+        if(_gController == null){
             _gController = new GraphicsController(true);
-            Log.send(Log.type.WARNING, "Window", "GraphicsController import not found.");
         }
         _gController.registerActive();
-        _gController.init(false);
 
         /* Initialise display */
         _board = new Board(importer);
@@ -37,6 +39,10 @@ public class GameWindow extends JFrame {
         setTitle(_gController.getWindowTitle());
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
+
+        String s = String.valueOf(_gController.getStepSize());
+
+        Log.send(Log.type.VALUE, "GameWindow", "Step size", "41.6", s);
 
         Timer timer = new Timer(_gController.getStepSize(), e -> {
             _gController.step();

@@ -16,11 +16,16 @@ public class GameSegment {
     private static final String TAG = "GameSegment";
 
     @XmlElement
+    private String id;
+    @XmlElement
+    private int mapX, mapY = 0;
+    @XmlElement
     private Map<String, MovingObject> movingItems;
     @XmlElement
     private Map<String, GameObject> staticItems;
 
     public GameSegment(){
+        id = "defaultId";
         movingItems = new HashMap<>();
         staticItems = new HashMap<>();
     }
@@ -91,5 +96,29 @@ public class GameSegment {
 
     public void setMovingItems(Map<String, MovingObject> movingItems){
         this.movingItems = movingItems;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public int getMapX() {
+        return mapX;
+    }
+
+    public void setMapX(int mapX) {
+        this.mapX = mapX;
+    }
+
+    public int getMapY() {
+        return mapY;
+    }
+
+    public void setMapY(int mapY) {
+        this.mapY = mapY;
     }
 }

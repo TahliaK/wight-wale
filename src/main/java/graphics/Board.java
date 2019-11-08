@@ -23,9 +23,9 @@ public class Board extends JPanel implements ActionListener{
     private GraphicsController _gController;
     //private XmlHandler<GameObject> GO_Xml;
 
-    public Board(XmlHandler<GraphicsController> out) {
+    public Board(XmlHandler<GraphicsController> out) { //outputs gameController on init
         initBoard();
-        out.writeToXml(_gController, "", "GameController");
+        //out.writeToXml(_gController, "", "GameController");
     }
 
     private void initBoard() {
@@ -42,7 +42,8 @@ public class Board extends JPanel implements ActionListener{
 
 
     private void loadImages() { //only needed if not loading directly from GraphicsController.xml, will be removed
-        GameObject gmOb = new GameObject();
+
+        /*GameObject gmOb = new GameObject();
         //GO_Xml = new XmlHandler<GameObject>(gmOb.getClass());
         //gmOb = GO_Xml.readFromXml("GameObjects", "skeleton.xml");
         gmOb.setImgFilename("Files/Images/background.png");
@@ -58,9 +59,10 @@ public class Board extends JPanel implements ActionListener{
         mvOb.setId("skeleton");
         mvOb.loadImageFile(true);
         mvOb.setVisibility(true);
-        _gController.registerMoving(mvOb);
+        _gController.registerMoving(mvOb); */
 
-        player = _gController.getMovingItemsById(mvOb.getId());
+        if(_gController != null)
+            player = _gController.getMovingItemsById("skeleton");
 
         Log.send(Log.type.INFO, TAG, "LoadImage complete.");
     }
@@ -100,6 +102,9 @@ public class Board extends JPanel implements ActionListener{
         @Override
         public void keyPressed(KeyEvent e) {
             player.keyPressed(e);
+            if(e.getKeyChar() == 'p'){
+                Log.send(Log.type.DEBUG, TAG, "Player location: " + player.getxPos() + " | " + player.getyPos());
+            }
         }
     }
 }
