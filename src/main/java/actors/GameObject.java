@@ -22,8 +22,13 @@ public class GameObject extends AbstractGameObject {
     protected Image image;  //sprite
 
     @XmlElement
-    protected int xPos, yPos; //position on Screen;
-    protected int width, height; //heh
+    protected int xPos;
+    @XmlElement
+    protected int yPos; //position on Screen;
+    @XmlElement
+    protected int width;
+    @XmlElement
+    protected int height;
     protected String imgFilename;
 
     /* Constructors */

@@ -3,6 +3,7 @@ package graphics;
 import actors.GameObject;
 import actors.MovingObject;
 import levels.GameSegment;
+import levels.LevelMap;
 import levels.LevelController;
 import utils.Log;
 import utils.XmlHandler;
@@ -17,10 +18,11 @@ public class GraphicsController {
     // Global members
     @XmlTransient
     private static final String TAG = "GraphicsController";
-    public static GraphicsController activeController = null;
-    public static LevelController activeLevel = null;
+    public static GraphicsController activeGraphicsController = null;
+    public static LevelMap activeLevel = null;
+    public static LevelController activeLevelController = null;
     private static XmlHandler<GcElements> settingsImporter = null;
-    private static XmlHandler<LevelController> levelImporter = null;
+    private static XmlHandler<LevelMap> levelImporter = null;
 
     // Instance members
     @XmlElement
@@ -28,7 +30,7 @@ public class GraphicsController {
     @XmlElement
     private GcElements settings;
     @XmlElement
-    private LevelController levelController;
+    private LevelMap levelMap;
     @XmlTransient
     private int stepSize;
     @XmlTransient
@@ -48,9 +50,11 @@ public class GraphicsController {
             settingsImporter = new XmlHandler<>(GcElements.class);
 
         if(levelImporter == null)
-            levelImporter = new XmlHandler<>(LevelController.class);
+            levelImporter = new XmlHandler<>(LevelMap.class);
 
-        levelController = LevelController.activeController;
+        //levelMap = LevelMap.activeController;
+        //This may not be necessary but init here anyway:
+        activeLevelController = LevelController.getActiveController();
 
         init(false);
     }
@@ -84,15 +88,15 @@ public class GraphicsController {
         }
         stepSize = 1000 / settings.fps; //fps into millisecond delay
 
-        if(levelController == null){
+        if(levelMap == null){
             if (activeLevel != null){
-                levelController = activeLevel;
+                levelMap = activeLevel;
                 loadLevelImages();
             } else {
                 Log.send(Log.type.WARNING, TAG, "GraphicsController init() called without levelController assigned.");
             }
         } else {
-            loadedArea = levelController.getSegment(0, 0);
+            loadedArea = levelMap.getSegment(0, 0);
             loadLevelImages();
             Log.send(Log.type.INFO, TAG, "Game segment loaded: " + loadedArea.getId());
         }
@@ -110,7 +114,7 @@ public class GraphicsController {
     public void loadLevelImages(){
 
         if(loadedArea == null){
-            loadedArea = levelController.getSegment(0, 0);
+            loadedArea = levelMap.getSegment(0, 0);
         }
 
         if(!loadedArea.getStaticItems().isEmpty()){
@@ -139,23 +143,23 @@ public class GraphicsController {
      */
     public void close(){
         settings = null;
-        if(activeController == this) {
-            activeController = null;
+        if(activeGraphicsController == this) {
+            activeGraphicsController = null;
         }
         Log.send(Log.type.INFO, TAG, "Destroyed successfully.");
     }
 
     public void registerActive(){
-        if(activeController != this){
-            activeController = this;
+        if(activeGraphicsController != this){
+            activeGraphicsController = this;
         } else {
             Log.send(Log.type.WARNING, TAG, "Attempted to re-register active controller.");
         }
     }
 
     public void deregisterActive(){
-        if(activeController == this){
-            activeController = null;
+        if(activeGraphicsController == this){
+            activeGraphicsController = null;
         } else {
             Log.send(Log.type.WARNING, TAG, "Attempted to de-register inactive controller.");
         }
@@ -283,12 +287,12 @@ public class GraphicsController {
         this.stepSize = stepSize;
     }
 
-    public LevelController getLevelController() {
-        return levelController;
+    public LevelMap getLevelMap() {
+        return levelMap;
     }
 
-    public void setLevelController(LevelController levelController) {
-        this.levelController = levelController;
+    public void setLevelMap(LevelMap levelMap) {
+        this.levelMap = levelMap;
     }
 }
 

@@ -33,7 +33,7 @@ public class Board extends JPanel implements ActionListener{
         addKeyListener(keyListener);
         setFocusable(true);
         requestFocusInWindow();
-        _gController = GraphicsController.activeController;
+        _gController = GraphicsController.activeGraphicsController;
         if(_gController != null) {
             player = _gController.getMovingItemsById("skeleton"); //todo: make this xml based
         }
@@ -104,6 +104,7 @@ public class Board extends JPanel implements ActionListener{
         public void keyPressed(KeyEvent e) {
             if(player != null)
                 player.keyPressed(e);
+
 
             if(e.getKeyChar() == 'p'){
                 Log.send(Log.type.DEBUG, TAG, "Player location: " + player.getxPos() + " | " + player.getyPos());

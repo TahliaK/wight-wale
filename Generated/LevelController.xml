@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<LevelCollection>
+    <levelCount>20</levelCount>
+    <Levels>
+        <MapSections>
+            <item>
+                <id>Id2</id>
+                <mapX>1</mapX>
+                <mapY>0</mapY>
+                <movingItems>
+                    <entry>
+                        <key>skeleton</key>
+                        <value>
+                            <id>skeleton</id>
+                            <visible>true</visible>
+                            <xPos>125</xPos>
+                            <yPos>50</yPos>
+                            <width>24</width>
+                            <height>30</height>
+                            <imgFilename>Files/Images/Skeleton.png</imgFilename>
+                            <dY>0</dY>
+                            <moveDistance>2</moveDistance>
+                        </value>
+                    </entry>
+                </movingItems>
+                <staticItems>
+                    <entry>
+                        <key>background</key>
+                        <value>
+                            <id>background</id>
+                            <visible>true</visible>
+                            <xPos>0</xPos>
+                            <yPos>0</yPos>
+                            <width>500</width>
+                            <height>500</height>
+                            <imgFilename>Files/Images/background.png</imgFilename>
+                        </value>
+                    </entry>
+                </staticItems>
+            </item>
+            <item xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+        </MapSections>
+        <MapSections>
+            <item xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+            <item xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+        </MapSections>
+        <maxWidth>2</maxWidth>
+        <maxHeight>2</maxHeight>
+        <atX>0</atX>
+        <atY>0</atY>
+    </Levels>
+    <Levels>
+        <MapSections>
+            <item>
+                <id>Id2</id>
+                <mapX>1</mapX>
+                <mapY>0</mapY>
+                <movingItems>
+                    <entry>
+                        <key>skeleton</key>
+                        <value>
+                            <id>skeleton</id>
+                            <visible>true</visible>
+                            <xPos>125</xPos>
+                            <yPos>50</yPos>
+                            <width>24</width>
+                            <height>30</height>
+                            <imgFilename>Files/Images/Skeleton.png</imgFilename>
+                            <dY>0</dY>
+                            <moveDistance>2</moveDistance>
+                        </value>
+                    </entry>
+                </movingItems>
+                <staticItems>
+                    <entry>
+                        <key>background</key>
+                        <value>
+                            <id>background</id>
+                            <visible>true</visible>
+                            <xPos>0</xPos>
+                            <yPos>0</yPos>
+                            <width>500</width>
+                            <height>500</height>
+                            <imgFilename>Files/Images/background.png</imgFilename>
+                        </value>
+                    </entry>
+                </staticItems>
+            </item>
+            <item xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+        </MapSections>
+        <MapSections>
+            <item xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+            <item xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+        </MapSections>
+        <maxWidth>2</maxWidth>
+        <maxHeight>2</maxHeight>
+        <atX>0</atX>
+        <atY>0</atY>
+    </Levels>
+</LevelCollection>

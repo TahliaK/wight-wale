@@ -1,10 +1,12 @@
 import graphics.Board;
 import graphics.GraphicsController;
+import levels.LevelMap;
 import levels.LevelController;
 import utils.Log;
 import utils.XmlHandler;
 
 import java.awt.EventQueue;
+import java.io.File;
 import javax.swing.JFrame;
 import javax.swing.Timer;
 
@@ -12,13 +14,25 @@ public class GameWindow extends JFrame {
 
     private Board _board;
     private GraphicsController _gController;
-    private LevelController _lController;
+    private LevelController _levelController;
+    private LevelMap _lController;
     public XmlHandler<GraphicsController> importer;
 
     public GameWindow() {
 
         /* Import LevelController */
-        _lController = LevelController.createFromXml("./Files/Levels", 2, 2);
+        _lController = LevelMap.createFromXml("./Files/Levels", 2, 2);
+        //_levelController  = LevelController.createFromXml("./Files/Levels");
+
+        _levelController = LevelController.getActiveController();
+        _levelController.levels[0] = _lController;
+        _lController.getSegment(0,0).setId("Id2");
+        _lController.getSegment(0,0).setMapX(1);
+        _levelController.levels[1] = _lController;
+        XmlHandler<LevelController> exporter = new XmlHandler<>(LevelController.class);
+        exporter.writeToXml(_levelController, "", "LevelController");
+        XmlHandler<LevelMap> mapExporter = new XmlHandler<>(LevelMap.class);
+        mapExporter.writeToXml(_lController, "", "LevelMap");
 
         /* Import GraphicsController settings */
         GraphicsController.activeLevel = _lController;

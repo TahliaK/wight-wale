@@ -9,32 +9,33 @@ import javax.xml.bind.annotation.*;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlRootElement (name = "Levels")
-public class LevelController {
+public class LevelMap {
 
     //global members
     @XmlTransient
-    private static final String TAG = "LevelController";
-    public static LevelController activeController = null;
+    private static final String TAG = "LevelMap";
+    private static final String DEFAULT_LEVEL_ID = "defaultId";
     @XmlElement
     public static GameSegment currentLevel = null;
     //public static MapNode activeMap = null;
 
     //instance members
-    @XmlElement (name = "GameSegmentCollection", required=true, nillable=true)
-    //@XmlJavaTypeAdapter(GameSegmentAdaptor.class)
-    private GameSegment[][] map = null;
+    @XmlElement (name = "MapSections", required=true, nillable=true)
+    private GameSegment[][] map;
     @XmlElement
-    private int maxWidth, maxHeight = 0;
+    private int maxWidth, maxHeight;
     @XmlElement
-    private int atX, atY = 0;
+    private int atX, atY;
 
-    public LevelController(){
-        if(activeController == null){
-            activeController = this;
-        }
+    public LevelMap(){
+        maxWidth = 0;
+        maxHeight = 0;
+        atX = 0;
+        atY = 0;
+        map = null;
     }
 
-    public LevelController(int maxWidth, int maxHeight){
+    public LevelMap(int maxWidth, int maxHeight){
         this();
         this.maxWidth = maxWidth;
         this.maxHeight = maxHeight;
@@ -51,7 +52,7 @@ public class LevelController {
         if(x >= 0 && y >= 0) {
             if (x < maxWidth && y < maxHeight) {
                 out = map[x][y];
-                if(out.getId() == "defaultId"){ //if only default
+                if(out.getId() == DEFAULT_LEVEL_ID){ //if only default
                     out = null;
                 }
             }
@@ -112,8 +113,8 @@ public class LevelController {
 
     }
 
-    public static LevelController createFromXml(String dir, int x, int y){
-        LevelController l = new LevelController(x, y);
+     public static LevelMap createFromXml(String dir, int x, int y){
+        LevelMap l = new LevelMap(x, y);
         l.loadFromXml(dir);
         return l;
     }
