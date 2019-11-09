@@ -96,12 +96,15 @@ public class Board extends JPanel implements ActionListener{
 
         @Override
         public void keyReleased(KeyEvent e) {
-            player.keyReleased(e);
+            if(player != null)
+                player.keyReleased(e);
         }
 
         @Override
         public void keyPressed(KeyEvent e) {
-            player.keyPressed(e);
+            if(player != null)
+                player.keyPressed(e);
+
             if(e.getKeyChar() == 'p'){
                 Log.send(Log.type.DEBUG, TAG, "Player location: " + player.getxPos() + " | " + player.getyPos());
             }
