@@ -20,12 +20,12 @@ public class Board extends JPanel implements ActionListener{
     private static String TAG = "Board";
     private MovingObject player; //1 object directly controlled by player
     private TAdapter keyListener;
-    private GraphicsController _gController;
+    private GraphicsController _gController = null;
     //private XmlHandler<GameObject> GO_Xml;
 
     public Board(XmlHandler<GraphicsController> out) { //outputs gameController on init
         initBoard();
-        //out.writeToXml(_gController, "", "GameController");
+            //out.writeToXml(_gController, "", "GameController");
     }
 
     private void initBoard() {

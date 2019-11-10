@@ -1,23 +1,17 @@
 package levels;
 
 import utils.Log;
-import utils.XmlHandler;
-
-import java.io.File;
 
 import javax.xml.bind.annotation.*;
 
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlRootElement (name = "Levels")
+@XmlRootElement (name = "LevelMap")
 public class LevelMap {
 
     //global members
     @XmlTransient
     private static final String TAG = "LevelMap";
     private static final String DEFAULT_LEVEL_ID = "defaultId";
-    @XmlElement
-    public static GameSegment currentLevel = null;
-    //public static MapNode activeMap = null;
 
     //instance members
     @XmlElement (name = "MapSections", required=true, nillable=true)
@@ -26,6 +20,8 @@ public class LevelMap {
     private int maxWidth, maxHeight;
     @XmlElement
     private int atX, atY;
+    @XmlElement
+    private String levelId;
 
     public LevelMap(){
         maxWidth = 0;
@@ -33,12 +29,14 @@ public class LevelMap {
         atX = 0;
         atY = 0;
         map = null;
+        levelId = DEFAULT_LEVEL_ID;
     }
 
-    public LevelMap(int maxWidth, int maxHeight){
+    public LevelMap(int maxWidth, int maxHeight, String id){
         this();
         this.maxWidth = maxWidth;
         this.maxHeight = maxHeight;
+        levelId = id;
         constructSegments();
     }
 
@@ -86,7 +84,7 @@ public class LevelMap {
 
         GameSegment out = map[atX][atY];
 
-        if(map[atX][atY].getId() == "defaultId"){   //if only default
+        if(map[atX][atY].getId() == DEFAULT_LEVEL_ID){   //if only default
             out = null;         //return null because no change
             atX -= horizontal;  //reverse movement change
             atY -= vertical;    //reverse movement change
@@ -95,11 +93,20 @@ public class LevelMap {
         return out;
     }
 
-    //Xml load functions
+    public String getLevelId() {
+        return levelId;
+    }
+
+    public void setLevelId(String levelId) {
+        this.levelId = levelId;
+    }
+
+    /** Xml load functions **/ /*
+
     public void loadFromXml(String dir){
         XmlHandler<GameSegment> _x = new XmlHandler<>(GameSegment.class);
 
-        File directory = new File(dir); /* "./Files/Levels" */
+        File directory = new File(dir); /* "./Files/Levels" */ /*
         File[] directoryListing = directory.listFiles();
         if(directoryListing != null){
             for (File child : directoryListing){
@@ -113,10 +120,10 @@ public class LevelMap {
 
     }
 
-     public static LevelMap createFromXml(String dir, int x, int y){
-        LevelMap l = new LevelMap(x, y);
+     public static LevelMap createFromXml(String dir, String id, int x, int y){
+        LevelMap l = new LevelMap(x, y, id);
         l.loadFromXml(dir);
         return l;
-    }
+    } */
 
 }
