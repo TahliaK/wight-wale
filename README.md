@@ -1,5 +1,5 @@
 # Wight-Whale
-This is a simple 2D Java game engine.
+This is a simple 2D Java game engine. To make a game, you only need to specify the behaviours & images you want in XML. The engine loads the XML documents and produces the game.
 
 ### Authors
 
