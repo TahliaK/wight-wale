@@ -109,6 +109,10 @@ public class Board extends JPanel implements ActionListener{
             if(e.getKeyChar() == 'p'){
                 Log.send(Log.type.DEBUG, TAG, "Player location: " + player.getxPos() + " | " + player.getyPos());
             }
+            if(e.getKeyChar() == 'm'){
+                Log.send(Log.type.DEBUG, TAG, "Changed to mapLocation 0-0-1");
+                _gController.moveTo(0, 0, 1);
+            }
         }
     }
 }

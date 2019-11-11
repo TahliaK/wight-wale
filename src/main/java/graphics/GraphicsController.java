@@ -90,13 +90,13 @@ public class GraphicsController {
 
         if(levelMap == null){
             if (activeLevel != null){
-                levelMap = activeLevel;
+                levelMap = activeLevel; //take existing global variables
                 loadLevelImages();
             } else {
                 Log.send(Log.type.WARNING, TAG, "GraphicsController init() called without levelController assigned.");
             }
         } else {
-            loadedArea = levelMap.getSegment(0, 0);
+            loadedArea = levelMap.getSegment(0, 0); //edit map segment here
             loadLevelImages();
             Log.send(Log.type.INFO, TAG, "Game segment loaded: " + loadedArea.getId());
         }
@@ -111,30 +111,30 @@ public class GraphicsController {
         }
     }
 
-    public void loadLevelImages(){
+    public void loadLevelImages() {
 
-        if(loadedArea == null){
+        if (loadedArea == null) { //defaults to first segment if none already in use
             loadedArea = levelMap.getSegment(0, 0);
         }
 
-        if(!loadedArea.getStaticItems().isEmpty()){
+        if (!loadedArea.getStaticItems().isEmpty()) {
             Map<String, GameObject> g = loadedArea.getStaticItems();
             for (Map.Entry<String, GameObject> entry : g.entrySet()) {
                 GameObject obj = entry.getValue();
                 obj.loadImageFile(false);
             }
-            Log.send(Log.type.INFO, TAG, "Static sprites loaded.");
         }
 
 
-        if(!loadedArea.getMovingItems().isEmpty()){
+        if (!loadedArea.getMovingItems().isEmpty()) {
             Map<String, MovingObject> m = loadedArea.getMovingItems();
             for (Map.Entry<String, MovingObject> entry : m.entrySet()) {
                 MovingObject obj = entry.getValue();
                 obj.loadImageFile(true);
             }
-            Log.send(Log.type.INFO, TAG, "Moving sprites loaded.");
         }
+
+        Log.send(Log.type.INFO, TAG, "Images loaded for area " + loadedArea.getId());
     }
 
     /**
@@ -192,14 +192,55 @@ public class GraphicsController {
     }
 
     public GameObject getStaticItemsById(String id) { return loadedArea.getStaticItemsById(id); }
-/*
-    public void setStaticItems(Map<String, GameObject> staticItems) {
-        this.staticItems = staticItems;
-    }
 
-    public void setMovingItems(Map<String, MovingObject> movingItems){
-        this.movingItems = movingItems;
-    } */
+    /**
+     *
+     * @param levelNum
+     * @param mapAreaX
+     * @param mapAreaY
+     * @return
+     */
+    public GameSegment moveTo(int levelNum, int mapAreaX, int mapAreaY){
+        GameSegment gs = null;
+
+        if(activeLevelController == null){
+            activeLevelController = LevelController.getActiveController();
+            if(activeLevelController == null){  //no active level controller
+                Log.send(Log.type.ERROR, TAG, "Cannot move with no levelController created.");
+            }
+        }
+
+        if(levelNum < activeLevelController.levels.length && levelNum >= 0){
+            activeLevel = activeLevelController.levels[levelNum];
+            gs = activeLevel.getSegment(mapAreaX, mapAreaY);
+        }
+
+        if(gs != null){
+
+            if(!loadedArea.getStaticItems().isEmpty()){
+                Map<String, GameObject> m = loadedArea.getStaticItems();
+                for (Map.Entry<String, GameObject> entry : m.entrySet()) {
+                    GameObject obj = entry.getValue();
+                    obj.unloadImage();
+                }
+            }
+
+            if(!loadedArea.getMovingItems().isEmpty()){
+                Map<String, MovingObject> m = loadedArea.getMovingItems();
+                for (Map.Entry<String, MovingObject> entry : m.entrySet()) {
+                    MovingObject obj = entry.getValue();
+                    obj.unloadImage();
+                }
+            }
+
+            Log.send(Log.type.INFO, TAG, "Area " + loadedArea.getId() + " unloaded.");
+
+            loadedArea = gs;
+            loadLevelImages();
+        }
+
+        return gs;
+    }
 
     /**
      * Moves all sprites 1 step forward

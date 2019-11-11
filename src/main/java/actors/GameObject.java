@@ -140,4 +140,9 @@ public class GameObject extends AbstractGameObject {
     public void setImgFilename(String imgFilename) {
         this.imgFilename = imgFilename;
     }
+
+    /* For clearing memory */
+    public void unloadImage(){
+        image.flush();
+    }
 }

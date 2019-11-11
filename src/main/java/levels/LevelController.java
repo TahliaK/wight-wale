@@ -24,15 +24,15 @@ public class LevelController {
 
     public static LevelController getActiveController(){
         if(activeController == null){
-            Log.send(Log.type.INFO, TAG, "LevelController created.");
             activeController = new LevelController();
+            Log.send(Log.type.INFO, TAG, "LevelController created: " + activeController.toString());
         }
 
         return activeController;
     }
 
     public static void setActiveController(LevelController lc){
-        Log.send(Log.type.INFO, TAG, "Manually set LevelController.");
+        Log.send(Log.type.INFO, TAG, "Set levelController: " + lc.toString());
         activeController = lc;
     }
 
@@ -47,9 +47,12 @@ public class LevelController {
                 if(!child.isHidden()) {
                     lc.loadFromXML(child, i);
                     i++;
+                    Log.send(Log.type.INFO, TAG, "Level loaded: " + child.getPath());
                 }
             }
         }
+
+        setActiveController(lc);
         return lc;
     }
 
@@ -79,6 +82,22 @@ public class LevelController {
         this.levelCount = levelCount;
     }
 
+    public LevelMap[] getLevels() {
+        return levels;
+    }
+
+    public LevelMap getLevel(int index){
+        LevelMap lm = null;
+        if(index < levels.length && index >= 0){
+            lm = levels[index];
+        }
+        return lm;
+    }
+
+    public void setLevels(LevelMap[] levels) {
+        this.levels = levels;
+    }
+
     public void loadFromXML(File xmlFile, int position){
         XmlHandler<LevelMap> _x = new XmlHandler<>(LevelMap.class);
         LevelMap lm = null;
@@ -87,6 +106,7 @@ public class LevelController {
             if(position >= 0 && position <= levels.length) {
                 lm = _x.readFromXml(xmlFile);
                 levels[position] = lm;
+                Log.send(Log.type.DEBUG, TAG, "Loaded levelMap: " + lm.getLevelId());
             } else {
                 Log.send(Log.type.WARNING, TAG, "Invalid level location for loaded file " + xmlFile.getPath());
             }
