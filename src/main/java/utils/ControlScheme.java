@@ -5,6 +5,10 @@ import actors.MovingObject;
 import javax.xml.bind.annotation.*;
 import java.awt.event.KeyEvent;
 
+/**
+ * Encapsulates common player-controlled keys
+ * and responses by a moving object
+ */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlRootElement
 public class ControlScheme {
@@ -27,6 +31,11 @@ public class ControlScheme {
         scheme = t;
     }
 
+    /**
+     * Handles key-press responses for MovingObjects
+     * @param pcO   the MovingObject / PlayerControlledObject to use
+     * @param keycode   result of e.getKeyCode() on KeyEvent e
+     */
     public void keyPressed(MovingObject pcO, int keycode){
         switch(scheme){
             case ARROW_KEYS:
@@ -38,6 +47,11 @@ public class ControlScheme {
         }
     }
 
+    /**
+     * Handles key-release responses for MovingObjects
+     * @param pcO   the MovingObject / PlayerControlledObject to use
+     * @param keycode   result of e.getKeyCode() on KeyEvent e
+     */
     public void keyReleased(MovingObject pcO, int keycode){
         switch(scheme){
             case ARROW_KEYS:

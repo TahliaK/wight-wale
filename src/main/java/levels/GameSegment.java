@@ -10,6 +10,10 @@ import javax.xml.bind.annotation.*;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Represents 1 visible map "area" on
+ * a static screen
+ */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlRootElement
 public class GameSegment {
@@ -34,19 +38,38 @@ public class GameSegment {
         staticItems = new HashMap<>();
     }
 
-    // getByID & register
+    /**
+     * Returns specified GameObject / StaticItem
+     * @param id    id of gameObject
+     * @return      GameObject or null if error (logs errors)
+     */
     public GameObject getStaticItemsById(String id) {
         return staticItems.get(id);
     }
 
+    /**
+     * Returns specified MovingObject / MovingItem
+     * @param id    id of MovingObject
+     * @return      MovingObject or null if error (logs errors)
+     */
     public MovingObject getMovingItemsById(String id) {
         return movingItems.get(id);
     }
 
+    /**
+     * Returns specified PlayerControlledObject / Items
+     * @param id    id of PlayerControlledObject
+     * @return      PlayerControlledObject, or null if error (logs errors)
+     */
     public PlayerControlledObject getPlayerControlledItemsById(String id) {
         return playerControlledItems.get(id);
     }
 
+    /**
+     * Registers a static object to this specific level
+     * @param obj   the GameObject to be registered
+     * @return      true if success, log + false if failure
+     */
     public boolean registerStatic(GameObject obj){
         boolean result = false;
 
@@ -68,6 +91,11 @@ public class GameSegment {
         return result;
     }
 
+    /**
+     * Registers a moving object to this specific level
+     * @param mObj   the MovingObject to be registered
+     * @return      true if success, log + false if failure
+     */
     public boolean registerMoving(MovingObject mObj){
         boolean result = false;
 
@@ -89,6 +117,11 @@ public class GameSegment {
         return result;
     }
 
+    /**
+     * Registers a Player-Controlled object to this specific level
+     * @param pcObj   the PlayerControlledObject to be registered
+     * @return      true if success, log + false if failure
+     */
     public boolean registerPlayerControlled(PlayerControlledObject pcObj){
         boolean result = false;
 
@@ -110,15 +143,26 @@ public class GameSegment {
         return result;
     }
 
-    //Get & Set
+    /**
+     * Gets all moving items
+     * @return Map of MovingObjects
+     */
     public Map<String, MovingObject> getMovingItems() {
         return movingItems;
     }
 
+    /**
+     * Gets all static / non-moving items
+     * @return Map of GameObjects
+     */
     public Map<String, GameObject> getStaticItems() {
         return staticItems;
     }
 
+    /**
+     * Gets all Player-controlled items
+     * @return Map of PlayerControlledObject
+     */
     public Map<String, PlayerControlledObject> getPlayerControlledItems() {
         return playerControlledItems;
     }

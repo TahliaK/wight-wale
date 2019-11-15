@@ -1,6 +1,9 @@
 package graphics;
 import javax.xml.bind.annotation.*;
 
+/**
+ * Encapsulates Window Settings (title, height, width + FPS) for import
+ */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlRootElement (name = "WindowSettings")
 public class GcElements {

@@ -1,11 +1,14 @@
 package actors;
 
 import utils.ControlScheme;
-import utils.Log;
 
 import javax.xml.bind.annotation.*;
 import java.awt.event.KeyEvent;
 
+/**
+ * A PlayerControlledObject is any object which is interacted
+ * with by the user
+ */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlRootElement
 public class PlayerControlledObject extends MovingObject {

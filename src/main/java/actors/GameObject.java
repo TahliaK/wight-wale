@@ -13,6 +13,9 @@ import java.io.IOException;
 //For loading from XML
 import javax.xml.bind.annotation.*;
 
+/**
+ * A non-moving object or sprite in game
+ */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlRootElement
 public class GameObject extends AbstractGameObject {
@@ -64,14 +67,28 @@ public class GameObject extends AbstractGameObject {
 
     /** Image loading **/
 
+    /**
+     * Gets the loaded image
+     * @return image or null if not yet loaded
+     */
     public Image getImage() {
         return image;
     }
 
+    /**
+     * Sets the loaded image
+     * @param image Image object to use
+     */
     public void setImage(Image image) {
         this.image = image;
     }
 
+    /**
+     * Loads image to use from a specified file
+     * @param file  File containing the image
+     * @param matchSpriteSizeToImage    if true, sprite will be same size as png image
+     * @return true if success, false if failure
+     */
     public boolean loadImageFrom(File file, Boolean matchSpriteSizeToImage){
         boolean loaded = false;
         try {
@@ -95,6 +112,11 @@ public class GameObject extends AbstractGameObject {
         return loaded;
     }
 
+    /**
+     * Loads image from the file already stored in imgFilename
+     * @param matchSpriteSizeToImage    if true, sprite will be same size as png image
+     * @return  true if success, false if failure
+     */
     public Boolean loadImageFile(Boolean matchSpriteSizeToImage){
         return loadImageFrom(new File(imgFilename), matchSpriteSizeToImage);
     }
@@ -141,7 +163,9 @@ public class GameObject extends AbstractGameObject {
         this.imgFilename = imgFilename;
     }
 
-    /* For clearing memory */
+    /**
+     * Flushes image buffer
+     */
     public void unloadImage(){
         image.flush();
     }

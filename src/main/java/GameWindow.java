@@ -2,14 +2,15 @@ import graphics.Board;
 import graphics.GraphicsController;
 import levels.LevelMap;
 import levels.LevelController;
-import utils.Log;
 import utils.XmlHandler;
 
 import java.awt.EventQueue;
-import java.io.File;
 import javax.swing.JFrame;
 import javax.swing.Timer;
 
+/**
+ * Main class & Window handler
+ */
 public class GameWindow extends JFrame {
 
     private Board _board;
@@ -18,6 +19,11 @@ public class GameWindow extends JFrame {
     private LevelMap activeLevel;
     public XmlHandler<GraphicsController> importer;
 
+    /**
+     * Default Constructor
+     * Imports LevelController & GraphicsController if available.
+     * Also creates and initializes board
+     */
     public GameWindow() {
 
         /* Import LevelController */

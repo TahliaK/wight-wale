@@ -9,6 +9,10 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
 
+/**
+ * Utility class which is used to export and import XML annotated classes
+ * @param <T> The annotated class that this is to be used for
+ */
 public class XmlHandler<T> {
     public static final String TAG = "XmlHandler";
     public static String PUT_DIR = "Generated/";
@@ -17,6 +21,11 @@ public class XmlHandler<T> {
     /* Marshalling is cheap, jaxbContext is not - reuse when possible */
     private JAXBContext jaxbContext;
 
+    /**
+     * Constructor
+     * @param type ClassName.class for the specified <T> class type
+     * @param <T> Class type
+     */
     public <T> XmlHandler(Class<T> type){
         try {
             jaxbContext = JAXBContext.newInstance(type);
@@ -71,10 +80,10 @@ public class XmlHandler<T> {
 
     /**
      * Reads any XML annotated class from document
-     * @param dir
-     * @param filename
-     * @param <T>
-     * @return
+     * @param dir directory in which to look
+     * @param filename file to read
+     * @param <T> expected class type
+     * @return T type object or null if failed
      */
     public <T> T readFromXml(String dir, String filename){
         T out = null;
@@ -101,6 +110,12 @@ public class XmlHandler<T> {
         return out;
     }
 
+    /**
+     * Alternative readFromXml using a File instead of String Filename
+     * @param xmlSource File to extract class from
+     * @param <T> expected class type
+     * @return Extracted object or null if failed
+     */
     public <T> T readFromXml(File xmlSource){
         T out = null;
         if (jaxbContext != null) {

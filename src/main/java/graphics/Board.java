@@ -5,7 +5,6 @@ import utils.ControlScheme;
 import utils.Log;
 import utils.XmlHandler;
 import actors.GameObject;
-import levels.LevelController;
 
 import java.awt.Graphics;
 import java.awt.event.ActionListener;
@@ -18,6 +17,9 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 
 
+/**
+ * The Board does image display and actionListening
+ */
 public class Board extends JPanel implements ActionListener{
 
     private static String TAG = "Board";
@@ -25,6 +27,12 @@ public class Board extends JPanel implements ActionListener{
     private GraphicsController _gController = null;
     private PlayerControlledObject temp_PCO = null;
 
+    /**
+     * Initializes the board
+     * This fetches the active GraphicsController and should be done
+     * AFTER initializing a GraphicsController.
+     * @param out currently not used
+     */
     public Board(XmlHandler<GraphicsController> out) { //outputs gameController on init
         initBoard();
             //out.writeToXml(_gController, "", "GameController");
@@ -66,7 +74,11 @@ public class Board extends JPanel implements ActionListener{
         Log.send(Log.type.INFO, TAG, "LoadImage complete.");
     } */
 
-
+    /**
+     * Called by GameWindow to paint the game images on the screen
+     * Should not be called directly by user
+     * @param g
+     */
     @Override
     public void paintComponent(Graphics g) {
         Map<String, GameObject> s = _gController.getStaticItems();
@@ -92,12 +104,19 @@ public class Board extends JPanel implements ActionListener{
         Toolkit.getDefaultToolkit().sync();
     }
 
+    /**
+     * Notifies that ActionEvent was received
+     * @param e
+     */
     @Override
     public void actionPerformed(ActionEvent e) {
         Log.send(Log.type.INFO, TAG, "ACTION PERFORMED.");
     }
 
 
+    /**
+     * Passes on key-press and key-release information to PlayerControlledObjects
+     */
     private class TAdapter extends KeyAdapter {
 
         @Override
@@ -118,13 +137,12 @@ public class Board extends JPanel implements ActionListener{
                 }
             }
 
-            if(e.getKeyChar() == 'm'){
+            if(e.getKeyChar() == 'm'){ //debug - changes to second GameSegment
                 Log.send(Log.type.DEBUG, TAG, "Changed to mapLocation 0-0-1");
                 _gController.moveTo(0, 0, 1);
             }
 
-            if(e.getKeyChar() == '['){
-                //Log.send(Log.type.DEBUG, TAG, temp_PCO.toString());
+            if(e.getKeyChar() == '['){ //debug - prints player location
                 PlayerControlledObject pc2 = _gController.getPlayerControlledItemById("player");
                 Log.send(Log.type.DEBUG, TAG, pc2.toString());
             }

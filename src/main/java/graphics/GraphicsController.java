@@ -12,6 +12,10 @@ import utils.XmlHandler;
 import javax.xml.bind.annotation.*;
 import java.util.Map;
 
+/**
+ * Singleton class which encapsulates all the graphical display info
+ * and executes the update loop tasks
+ */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlRootElement (name = "Graphics")
 public class GraphicsController {
@@ -37,6 +41,10 @@ public class GraphicsController {
     @XmlTransient
     public boolean gameRunning;
 
+    /**
+     * Default constructor
+     * @warning You MUST call "init" yourself if you use this
+     */
     public GraphicsController(){
         stepSize = 1; //default time step, shouldn't really ever be used...
         gameRunning = true;
@@ -57,22 +65,21 @@ public class GraphicsController {
         //This may not be necessary but init here anyway:
         activeLevelController = LevelController.getActiveController();
 
-        init(false);
     }
 
+    /**
+     * Constructs graphicsController and calls Init(importSettings)
+     * @param importSettings boolean, true if you want to import from Files/GC_Settings.xml
+     */
     public GraphicsController(boolean importSettings){
-        stepSize = 1;
-        gameRunning = true;
-        settings = null;
-
-        if(settingsImporter == null)
-            settingsImporter = new XmlHandler<GcElements>(new GcElements().getClass());
-
+        this();
         init(importSettings);
     }
 
     /**
-     * This initialises the class and, if found, imports settings from Files/GraphicsController.xml
+     * Initializes (or reinitializes) the GraphicsController to the starting
+     * GameSegment & Level
+     * @param importSettings boolean, true if you want to import from Files/GC_Settings.xml
      */
     public void init(boolean importSettings){
 
@@ -97,7 +104,7 @@ public class GraphicsController {
                 Log.send(Log.type.WARNING, TAG, "GraphicsController init() called without levelController assigned.");
             }
         } else {
-            loadedArea = levelMap.getSegment(0, 0); //edit map segment here
+            loadedArea = levelMap.getSegment(0, 0);
             loadLevelImages();
             Log.send(Log.type.INFO, TAG, "Game segment loaded: " + loadedArea.getId());
         }
@@ -112,6 +119,11 @@ public class GraphicsController {
         }
     }
 
+    /**
+     * Loads all images for the current area to memory
+     * By default, this will let you specify the size for Static Items,
+     * but it will match moving + controlled items to the png size.
+     */
     public void loadLevelImages() {
 
         if (loadedArea == null) { //defaults to first segment if none already in use
@@ -158,6 +170,9 @@ public class GraphicsController {
         Log.send(Log.type.INFO, TAG, "Destroyed successfully.");
     }
 
+    /**
+     * Registers the current GraphicsController in use as active.
+     */
     public void registerActive(){
         if(activeGraphicsController != this){
             activeGraphicsController = this;
@@ -166,6 +181,9 @@ public class GraphicsController {
         }
     }
 
+    /**
+     * De-registers the current GraphicsController in use as active.
+     */
     public void deregisterActive(){
         if(activeGraphicsController == this){
             activeGraphicsController = null;
@@ -183,44 +201,87 @@ public class GraphicsController {
         return loadedArea.registerStatic(obj);
     }
 
+    /**
+     * Registers a moveable object for rendering
+     * @param mObj the MovingObject to display / use
+     * @return success value; log output shows errors
+     */
     public boolean registerMoving(MovingObject mObj){
         return loadedArea.registerMoving(mObj);
     }
 
+    /**
+     * Registers a player-controllable object for rendering
+     * @param pcObj the PlayerControlledObject to display / use
+     * @return success value; log output shows errors
+     */
     public boolean registerPlayerControlled(PlayerControlledObject pcObj) {
         return loadedArea.registerPlayerControlled(pcObj);
     }
 
+    /**
+     * Returns full Map of MovingObjects for current display area
+     * @return success value; log output shows errors
+     */
     public Map<String, MovingObject> getMovingItems() {
         return loadedArea.getMovingItems();
     }
 
+    /**
+     * Returns a specific MovingObject by its ID value
+     * Note: this requires the <entry/> tag and the <id/> tag to match in the XMl
+     * for an imported level.
+     * @param id String ID (unique among MovingObjects)
+     * @return success value; log output shows errors
+     */
     public MovingObject getMovingItemsById(String id) {
         return loadedArea.getMovingItemsById(id);
     }
 
+    /**
+     * Returns full Map of GameObjects for current display area
+     * @return success value; log output shows errors
+     */
     public Map<String, GameObject> getStaticItems() {
         return loadedArea.getStaticItems();
     }
 
+    /**
+     * Returns a specific GameObject by its ID value
+     * Note: this requires the <entry/> tag and the <id/> tag to match in the XMl
+     * for an imported level.
+     * @param id String ID (unique among GameObjects)
+     * @return success value; log output shows errors
+     */
     public GameObject getStaticItemsById(String id) {
         return loadedArea.getStaticItemsById(id);
     }
 
+    /**
+     * Returns full Map of PlayerControlledObjects for current display area
+     * @return success value; log output shows errors
+     */
     public Map<String, PlayerControlledObject> getPlayerControlledItems() {
         return loadedArea.getPlayerControlledItems();
     }
 
+    /**
+     * Returns a specific PlayerControlledObject by its ID value
+     * Note: this requires the <entry/> tag and the <id/> tag to match in the XMl
+     * for an imported level.
+     * @param id String ID (unique among PlayerControlledObjects)
+     * @return success value; log output shows errors
+     */
     public PlayerControlledObject getPlayerControlledItemById(String id) {
         return loadedArea.getPlayerControlledItemsById(id);
     }
 
     /**
-     *
-     * @param levelNum
-     * @param mapAreaX
-     * @param mapAreaY
-     * @return
+     * Unloads current area and loads the specified level and gameSegment
+     * @param levelNum level number (in import/addition order)
+     * @param mapAreaX First coordinate value for segment
+     * @param mapAreaY Second coordinate value for segment
+     * @return GameSegment in use if successful, null if unsuccessful
      */
     public GameSegment moveTo(int levelNum, int mapAreaX, int mapAreaY){
         GameSegment gs = null;
@@ -284,6 +345,7 @@ public class GraphicsController {
 
     /**
      * Moves all sprites 1 step forward based on time in game loop
+     * Currently not functional
      */
     public void step(double delta) {
         Map<String, MovingObject> m = loadedArea.getMovingItems();

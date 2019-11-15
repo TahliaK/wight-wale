@@ -23,6 +23,11 @@ public class LevelMap {
     @XmlElement
     private String levelId;
 
+    /**
+     * Default constructor
+     * Sets max width + height as 0, position as 0,0
+     * and levelId as the default
+     */
     public LevelMap(){
         maxWidth = 0;
         maxHeight = 0;
@@ -32,6 +37,12 @@ public class LevelMap {
         levelId = DEFAULT_LEVEL_ID;
     }
 
+    /**
+     * Custom constructor
+     * @param maxWidth maximum number of gameSegments on X axis
+     * @param maxHeight maximum number of gameSegments on Y axis
+     * @param id level ID
+     */
     public LevelMap(int maxWidth, int maxHeight, String id){
         this();
         this.maxWidth = maxWidth;
@@ -40,11 +51,20 @@ public class LevelMap {
         constructSegments();
     }
 
-    //this is public despite lack of setters/getters due to impact of XML stuff
+    /**
+     * This initializes the GameSegment data structure
+     * It clears the map when called
+     */
     public void constructSegments(){
         map = new GameSegment[maxWidth][maxHeight];
     }
 
+    /**
+     * Returns a specific segment at location x and y
+     * @param x X axis position of gameSegment
+     * @param y Y axis position of gameSegment
+     * @return GameSegment or null if invalid location / default ID
+     */
     public GameSegment getSegment(int x, int y){
         GameSegment out = null;
         if(x >= 0 && y >= 0) {
@@ -58,6 +78,13 @@ public class LevelMap {
         return out;
     }
 
+    /**
+     * Puts a gameSegment in the specified map location
+     * @param x X axis position
+     * @param y Y axis position
+     * @param gs GameSegment to include
+     * @return true if successful, false if x or y invalid
+     */
     public boolean putSegment(int x, int y, GameSegment gs){
         boolean result = false;
         if(x >= 0 && y >= 0){
@@ -69,7 +96,12 @@ public class LevelMap {
         return result;
     }
 
-    //Map movement functions
+    /**
+     * Retrieves the Game Segment specified at the horizontal + vertical distance from current
+     * @param horizontal number of X-axis segments to move (-/+ for direction)
+     * @param vertical number of Y-axis segments to move (-/+ for direction)
+     * @return GameSegment found or null if none stored in that location
+     */
     public GameSegment move(int horizontal, int vertical){
         if(atX + horizontal >= 0 && atX + horizontal < maxWidth){
             if(atY + vertical >= 0 && atY + vertical < maxHeight){
@@ -93,37 +125,21 @@ public class LevelMap {
         return out;
     }
 
+    /**
+     * Gets the level name / ID
+     * Note that levels can only be retrieved by number, not ID, unlike GameObjects
+     * @return level ID
+     */
     public String getLevelId() {
         return levelId;
     }
 
+    /**
+     * Sets the level name / ID
+     * @param levelId
+     */
     public void setLevelId(String levelId) {
         this.levelId = levelId;
     }
-
-    /** Xml load functions **/ /*
-
-    public void loadFromXml(String dir){
-        XmlHandler<GameSegment> _x = new XmlHandler<>(GameSegment.class);
-
-        File directory = new File(dir); /* "./Files/Levels" */ /*
-        File[] directoryListing = directory.listFiles();
-        if(directoryListing != null){
-            for (File child : directoryListing){
-                if(child.exists() && child.getName().contains(".xml")) {
-                    GameSegment childseg = _x.readFromXml(child);
-                    map[childseg.getMapX()][childseg.getMapY()] = childseg;
-                    Log.send(Log.type.DEBUG, TAG, "Loaded map area: " + childseg.getId());
-                }
-            }
-        }
-
-    }
-
-     public static LevelMap createFromXml(String dir, String id, int x, int y){
-        LevelMap l = new LevelMap(x, y, id);
-        l.loadFromXml(dir);
-        return l;
-    } */
 
 }

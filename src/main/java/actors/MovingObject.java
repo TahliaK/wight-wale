@@ -34,26 +34,50 @@ public class MovingObject extends GameObject {
         yPos += dY;
     }
 
+    /**
+     * Gets the distance moving each step on X axis
+     * @return integer
+     */
     public int getdX() {
         return dX;
     }
 
+    /**
+     * Set the X axis movement
+     * @param dX    integer distance in pixels
+     */
     public void setdX(int dX) {
         this.dX = dX;
     }
 
+    /**
+     * Gets the distance moving each step on Y axis
+     * @return integer
+     */
     public int getdY() {
         return dY;
     }
 
+    /**
+     * Set the Y axis movement
+     * @param dY    integer distance in pixels
+     */
     public void setdY(int dY) {
         this.dY = dY;
     }
 
+    /**
+     * Gets stored move-size value
+     * @return integer distance in pixels
+     */
     public int getStepSize() {
         return stepSize;
     }
 
+    /**
+     * Sets default move-size value
+     * @param stepSize integer distance in pixels
+     */
     public void setStepSize(int stepSize) {
         this.stepSize = stepSize;
     }
