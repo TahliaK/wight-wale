@@ -2,6 +2,7 @@ package graphics;
 
 import actors.GameObject;
 import actors.MovingObject;
+import actors.PlayerControlledObject;
 import levels.GameSegment;
 import levels.LevelMap;
 import levels.LevelController;
@@ -134,6 +135,14 @@ public class GraphicsController {
             }
         }
 
+        if(!loadedArea.getPlayerControlledItems().isEmpty()){
+            Map<String, PlayerControlledObject> p = loadedArea.getPlayerControlledItems();
+            for(Map.Entry<String, PlayerControlledObject> entry : p.entrySet()){
+                PlayerControlledObject obj = entry.getValue();
+                obj.loadImageFile(true);
+            }
+        }
+
         Log.send(Log.type.INFO, TAG, "Images loaded for area " + loadedArea.getId());
     }
 
@@ -178,6 +187,10 @@ public class GraphicsController {
         return loadedArea.registerMoving(mObj);
     }
 
+    public boolean registerPlayerControlled(PlayerControlledObject pcObj) {
+        return loadedArea.registerPlayerControlled(pcObj);
+    }
+
     public Map<String, MovingObject> getMovingItems() {
         return loadedArea.getMovingItems();
     }
@@ -186,12 +199,21 @@ public class GraphicsController {
         return loadedArea.getMovingItemsById(id);
     }
 
-
     public Map<String, GameObject> getStaticItems() {
         return loadedArea.getStaticItems();
     }
 
-    public GameObject getStaticItemsById(String id) { return loadedArea.getStaticItemsById(id); }
+    public GameObject getStaticItemsById(String id) {
+        return loadedArea.getStaticItemsById(id);
+    }
+
+    public Map<String, PlayerControlledObject> getPlayerControlledItems() {
+        return loadedArea.getPlayerControlledItems();
+    }
+
+    public PlayerControlledObject getPlayerControlledItemById(String id) {
+        return loadedArea.getPlayerControlledItemsById(id);
+    }
 
     /**
      *
@@ -203,21 +225,21 @@ public class GraphicsController {
     public GameSegment moveTo(int levelNum, int mapAreaX, int mapAreaY){
         GameSegment gs = null;
 
-        if(activeLevelController == null){
+        if(activeLevelController == null){  //Checks that LevelController exists
             activeLevelController = LevelController.getActiveController();
             if(activeLevelController == null){  //no active level controller
                 Log.send(Log.type.ERROR, TAG, "Cannot move with no levelController created.");
             }
         }
 
-        if(levelNum < activeLevelController.levels.length && levelNum >= 0){
+        if(levelNum < activeLevelController.levels.length && levelNum >= 0){    //checks that level number is in range
             activeLevel = activeLevelController.levels[levelNum];
             gs = activeLevel.getSegment(mapAreaX, mapAreaY);
         }
 
-        if(gs != null){
+        if(gs != null){ //checks that segment was successfully retrieved
 
-            if(!loadedArea.getStaticItems().isEmpty()){
+            if(!loadedArea.getStaticItems().isEmpty()){ //checks for static items to unload
                 Map<String, GameObject> m = loadedArea.getStaticItems();
                 for (Map.Entry<String, GameObject> entry : m.entrySet()) {
                     GameObject obj = entry.getValue();
@@ -225,7 +247,7 @@ public class GraphicsController {
                 }
             }
 
-            if(!loadedArea.getMovingItems().isEmpty()){
+            if(!loadedArea.getMovingItems().isEmpty()){ //checks for moving items to unload
                 Map<String, MovingObject> m = loadedArea.getMovingItems();
                 for (Map.Entry<String, MovingObject> entry : m.entrySet()) {
                     MovingObject obj = entry.getValue();
@@ -235,8 +257,8 @@ public class GraphicsController {
 
             Log.send(Log.type.INFO, TAG, "Area " + loadedArea.getId() + " unloaded.");
 
-            loadedArea = gs;
-            loadLevelImages();
+            loadedArea = gs; //changes loaded area to retrieved gameSegment
+            loadLevelImages();  //loads images for new level
         }
 
         return gs;
@@ -250,6 +272,11 @@ public class GraphicsController {
             Map<String, MovingObject> m = loadedArea.getMovingItems();
             for (Map.Entry<String, MovingObject> entry : m.entrySet()) {
                 MovingObject obj = entry.getValue();
+                obj.step();
+            }
+            Map<String, PlayerControlledObject> p = loadedArea.getPlayerControlledItems();
+            for(Map.Entry<String, PlayerControlledObject> entry : p.entrySet()) {
+                PlayerControlledObject obj = entry.getValue();
                 obj.step();
             }
         }

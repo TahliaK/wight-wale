@@ -45,9 +45,6 @@ public class GameWindow extends JFrame {
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
 
-        //String s = String.valueOf(_gController.getStepSize());
-        //Log.send(Log.type.VALUE, "GameWindow", "Step size", "41.6", s);
-
         Timer timer = new Timer(_gController.getStepSize(), e -> {
             _gController.step();
             _board.repaint();

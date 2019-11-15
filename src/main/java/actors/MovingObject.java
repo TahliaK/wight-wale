@@ -8,12 +8,14 @@ import javax.xml.bind.annotation.*;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlRootElement
+@XmlSeeAlso({PlayerControlledObject.class})
 public class MovingObject extends GameObject {
 
     @XmlTransient
     private static final String TAG = "MovingObject";
     @XmlTransient
     protected int dX = 0; //movement axis
+    @XmlTransient
     protected int dY = 0; //movement axis
     @XmlElement (name = "moveDistance")
     protected int stepSize = 2; //movement distance
@@ -30,50 +32,6 @@ public class MovingObject extends GameObject {
     public void step() {
         xPos += dX;
         yPos += dY;
-    }
-
-    //response to direct key reactions
-    //will be made XML-adjustable shortly
-    public void keyPressed(KeyEvent e) {
-        int key = e.getKeyCode();
-
-        if (key == KeyEvent.VK_LEFT) {
-            dX = -stepSize;
-        }
-
-        if (key == KeyEvent.VK_RIGHT) {
-            dX = stepSize;
-
-        }
-
-        if (key == KeyEvent.VK_UP) {
-            dY = -stepSize;
-        }
-
-        if (key == KeyEvent.VK_DOWN) {
-            dY = stepSize;
-        }
-    }
-
-    public void keyReleased(KeyEvent e) {
-
-        int key = e.getKeyCode();
-
-        if (key == KeyEvent.VK_LEFT) {
-            dX = 0;
-        }
-
-        if (key == KeyEvent.VK_RIGHT) {
-            dX = 0;
-        }
-
-        if (key == KeyEvent.VK_UP) {
-            dY = 0;
-        }
-
-        if (key == KeyEvent.VK_DOWN) {
-            dY = 0;
-        }
     }
 
     public int getdX() {

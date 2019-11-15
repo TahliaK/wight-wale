@@ -105,11 +105,23 @@ public class LevelController {
         if(xmlFile.exists() && xmlFile.getName().contains(".xml")){
             if(position >= 0 && position <= levels.length) {
                 lm = _x.readFromXml(xmlFile);
-                levels[position] = lm;
-                Log.send(Log.type.DEBUG, TAG, "Loaded levelMap: " + lm.getLevelId());
+                if(lm != null) {
+                    levels[position] = lm;
+                    Log.send(Log.type.DEBUG, TAG, "Loaded levelMap: " + lm.getLevelId());
+                } else {
+                    Log.send(Log.type.ERROR, TAG, "Xml loading failed [check class annotation]");
+                }
             } else {
                 Log.send(Log.type.WARNING, TAG, "Invalid level location for loaded file " + xmlFile.getPath());
             }
+        }
+    }
+
+    public static void exportToXml(LevelController l){
+        XmlHandler<LevelMap> _x = new XmlHandler<>(LevelMap.class);
+
+        for(int i = 0; i < l.levels.length; i++){
+            _x.writeToXml(l.levels[i], "", l.levels[i].getLevelId());
         }
     }
 

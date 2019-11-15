@@ -1,8 +1,11 @@
 package graphics;
 import actors.MovingObject;
+import actors.PlayerControlledObject;
+import utils.ControlScheme;
 import utils.Log;
 import utils.XmlHandler;
 import actors.GameObject;
+import levels.LevelController;
 
 import java.awt.Graphics;
 import java.awt.event.ActionListener;
@@ -18,10 +21,9 @@ import java.awt.event.KeyEvent;
 public class Board extends JPanel implements ActionListener{
 
     private static String TAG = "Board";
-    private MovingObject player; //1 object directly controlled by player
     private TAdapter keyListener;
     private GraphicsController _gController = null;
-    //private XmlHandler<GameObject> GO_Xml;
+    private PlayerControlledObject temp_PCO = null;
 
     public Board(XmlHandler<GraphicsController> out) { //outputs gameController on init
         initBoard();
@@ -34,14 +36,10 @@ public class Board extends JPanel implements ActionListener{
         setFocusable(true);
         requestFocusInWindow();
         _gController = GraphicsController.activeGraphicsController;
-        if(_gController != null) {
-            player = _gController.getMovingItemsById("skeleton"); //todo: make this xml based
-        }
-        //loadImages();
     }
 
 
-    private void loadImages() { //only needed if not loading directly from GraphicsController.xml, will be removed
+    /*private void loadImages() { //only needed if not loading directly from GraphicsController.xml, will be removed
 
         /*GameObject gmOb = new GameObject();
         //GO_Xml = new XmlHandler<GameObject>(gmOb.getClass());
@@ -59,13 +57,14 @@ public class Board extends JPanel implements ActionListener{
         mvOb.setId("skeleton");
         mvOb.loadImageFile(true);
         mvOb.setVisibility(true);
-        _gController.registerMoving(mvOb); */
+        _gController.registerMoving(mvOb); */ /*
 
-        if(_gController != null)
-            player = _gController.getMovingItemsById("skeleton");
+        if(_gController != null) {
+            MovingObject player = _gController.getMovingItemsById("skeleton");
+        }
 
         Log.send(Log.type.INFO, TAG, "LoadImage complete.");
-    }
+    } */
 
 
     @Override
@@ -82,6 +81,13 @@ public class Board extends JPanel implements ActionListener{
             if(sprite.isVisible())
                 g.drawImage(sprite.getImage(), sprite.getxPos(), sprite.getyPos(), null);
         }
+        Map<String, PlayerControlledObject> p = _gController.getPlayerControlledItems();
+        for(Map.Entry<String, PlayerControlledObject> entry : p.entrySet()){
+            PlayerControlledObject sprite = entry.getValue();
+            if(sprite.isVisible()){
+                g.drawImage(sprite.getImage(), sprite.getxPos(), sprite.getyPos(), null);
+            }
+        }
 
         Toolkit.getDefaultToolkit().sync();
     }
@@ -96,22 +102,31 @@ public class Board extends JPanel implements ActionListener{
 
         @Override
         public void keyReleased(KeyEvent e) {
-            if(player != null)
-                player.keyReleased(e);
+            for(Map.Entry<String, PlayerControlledObject> pcItem : _gController.getPlayerControlledItems().entrySet()){
+                pcItem.getValue().keyReleased(e);
+            }
         }
 
         @Override
         public void keyPressed(KeyEvent e) {
-            if(player != null)
-                player.keyPressed(e);
+            for(Map.Entry<String, PlayerControlledObject> pcItem : _gController.getPlayerControlledItems().entrySet()){
+                PlayerControlledObject pc = pcItem.getValue();
+                pc.keyPressed(e);
+                if(e.getKeyChar() == 'p'){
+                    Log.send(Log.type.DEBUG, TAG, "Player location: " + pc.getxPos() + " | " + pc.getyPos());
 
-
-            if(e.getKeyChar() == 'p'){
-                Log.send(Log.type.DEBUG, TAG, "Player location: " + player.getxPos() + " | " + player.getyPos());
+                }
             }
+
             if(e.getKeyChar() == 'm'){
                 Log.send(Log.type.DEBUG, TAG, "Changed to mapLocation 0-0-1");
                 _gController.moveTo(0, 0, 1);
+            }
+
+            if(e.getKeyChar() == '['){
+                //Log.send(Log.type.DEBUG, TAG, temp_PCO.toString());
+                PlayerControlledObject pc2 = _gController.getPlayerControlledItemById("player");
+                Log.send(Log.type.DEBUG, TAG, pc2.toString());
             }
         }
     }
