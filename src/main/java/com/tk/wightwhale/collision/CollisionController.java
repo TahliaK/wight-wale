@@ -2,6 +2,7 @@ package com.tk.wightwhale.collision;
 
 import com.tk.wightwhale.actors.*;
 import com.tk.wightwhale.graphics.GraphicsController;
+import com.tk.wightwhale.utils.ImageUtils;
 import com.tk.wightwhale.utils.Log;
 
 import java.util.Map;
@@ -15,10 +16,10 @@ public class CollisionController {
     public static CollisionController getActiveController(){
         if(activeController == null){
             activeController = new CollisionController();
+            Log.send(Log.type.DEBUG, TAG, "[[static]] Active controller fetched");
         }
         return activeController;
     }
-
 
 
     public CollisionController() {
@@ -47,7 +48,8 @@ public class CollisionController {
                 if(obj != mv) {
                     if(!obj.getGroupCategory().equals("background")) {
                         if (obj.getBounds().intersects(mv.getBounds())) {
-                            Log.send(Log.type.DEBUG, TAG, "COLLISION: " + mv.toString() + " WITH " + obj.toString());
+                            Log.send(Log.type.DEBUG, TAG, "Bounding collision: " + mv.toString() + " WITH " + obj.toString());
+                            Log.send(Log.type.DEBUG, TAG, "Actual collision status: " + ImageUtils.imageCollision(obj, mv));
                         } //endif
                     }
                 } //endif
@@ -57,7 +59,8 @@ public class CollisionController {
                 MovingObject obj = entry.getValue();
                 if(obj != mv) {
                     if (obj.getBounds().intersects(mv.getBounds())) {
-                        Log.send(Log.type.DEBUG, TAG, "COLLISION: " + mv.toString() + " WITH " + obj.toString());
+                        Log.send(Log.type.DEBUG, TAG, "Bounding collision: " + mv.toString() + " WITH " + obj.toString());
+                        Log.send(Log.type.DEBUG, TAG, "Actual collision status: " + ImageUtils.imageCollision(obj, mv));
                     } //endif
                 } //endif
             }//end moving items
@@ -66,7 +69,8 @@ public class CollisionController {
                 PlayerControlledObject obj = entry.getValue();
                 if(obj != mv) {
                     if (obj.getBounds().intersects(mv.getBounds())) {
-                        Log.send(Log.type.DEBUG, TAG, "COLLISION: " + mv.toString() + " WITH " + obj.toString());
+                        Log.send(Log.type.DEBUG, TAG, "Bounding collision: " + mv.toString() + " WITH " + obj.toString());
+                        Log.send(Log.type.DEBUG, TAG, "Actual collision status: " + ImageUtils.imageCollision(obj, mv));
                     } //endif
                 }
             }//end static items
