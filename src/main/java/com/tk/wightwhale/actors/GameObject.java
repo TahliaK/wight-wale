@@ -5,7 +5,7 @@ import com.tk.wightwhale.utils.Log;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
-import java.awt.Image;
+import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -177,5 +177,15 @@ public class GameObject extends AbstractGameObject {
      */
     public void unloadImage(){
         image.flush();
+    }
+
+    @Override
+    public Rectangle getBounds() {
+        return new Rectangle(xPos, yPos, width, height);
+    }
+
+    @Override
+    public String toString(){
+        return "Id=" + id + " Pos=[" + xPos + ":" + yPos + "]";
     }
 }

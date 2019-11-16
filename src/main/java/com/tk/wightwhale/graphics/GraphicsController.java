@@ -3,6 +3,7 @@ package com.tk.wightwhale.graphics;
 import com.tk.wightwhale.actors.GameObject;
 import com.tk.wightwhale.actors.MovingObject;
 import com.tk.wightwhale.actors.PlayerControlledObject;
+import com.tk.wightwhale.collision.CollisionController;
 import com.tk.wightwhale.levels.GameSegment;
 import com.tk.wightwhale.levels.LevelMap;
 import com.tk.wightwhale.levels.LevelController;
@@ -26,19 +27,26 @@ public class GraphicsController {
     private static final String TAG = "GraphicsController";
     /** Active graphicsController singleton **/
     @XmlTransient
-    public static GraphicsController activeGraphicsController = null;
+    private static GraphicsController activeGraphicsController = null;
     /** Active level map **/
     @XmlTransient
     public static LevelMap activeLevel = null;
     /** Active level controller  **/
     @XmlTransient
     public static LevelController activeLevelController = null;
+    /** Active collision controller **/
+    @XmlTransient
+    public static CollisionController activeCollisionController = null;
     /** XmlHandler to import settings in init() **/
     @XmlTransient
     private static XmlHandler<GcElements> settingsImporter = null;
     /** XmlHandler to import com.tk.wightwhale.levels **/
     @XmlTransient
     private static XmlHandler<LevelMap> levelImporter = null;
+
+    public static GraphicsController GetController(){
+        return activeGraphicsController;
+    }
 
     // Instance members
     /** GameSegment being displayed in com.tk.wightwhale.graphics **/
@@ -62,6 +70,7 @@ public class GraphicsController {
      * You MUST call "init" yourself if you use this
      */
     public GraphicsController(){
+        registerActive();
         stepSize = 1; //default time step, shouldn't really ever be used...
         gameRunning = true;
         settings = null;
@@ -80,6 +89,7 @@ public class GraphicsController {
         //levelMap = LevelMap.activeController;
         //This may not be necessary but init here anyway:
         activeLevelController = LevelController.getActiveController();
+        activeCollisionController = CollisionController.getActiveController();
 
     }
 
@@ -350,11 +360,13 @@ public class GraphicsController {
             for (Map.Entry<String, MovingObject> entry : m.entrySet()) {
                 MovingObject obj = entry.getValue();
                 obj.step();
+                activeCollisionController.step(obj);
             }
             Map<String, PlayerControlledObject> p = loadedArea.getPlayerControlledItems();
             for(Map.Entry<String, PlayerControlledObject> entry : p.entrySet()) {
                 PlayerControlledObject obj = entry.getValue();
                 obj.step();
+                activeCollisionController.step(obj);
             }
         }
     }

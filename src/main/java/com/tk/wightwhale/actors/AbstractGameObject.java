@@ -1,5 +1,7 @@
 package com.tk.wightwhale.actors;
 
+import java.awt.Rectangle;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -17,6 +19,8 @@ public abstract class AbstractGameObject {
     /** visible status **/
     @XmlElement
     protected boolean visible;
+    @XmlElement
+    protected String groupCategory;
 
     /**
      * Returns ID value
@@ -38,11 +42,37 @@ public abstract class AbstractGameObject {
      * Returns visibility state
      * @return true if visible
      */
-    public boolean isVisible() { return visible; }
+    public boolean isVisible() {
+        return visible;
+    }
 
     /**
      * Sets visibility
      * @param state true for visible, false for invisible
      */
-    public void setVisibility(boolean state) { this.visible = state; }
+    public void setVisibility(boolean state) {
+        this.visible = state;
+    }
+
+    /**
+     * Returns a group category ID
+     * @return
+     */
+    public String getGroupCategory() {
+        return groupCategory;
+    }
+
+    /**
+     * Sets the group category ID
+     * @param groupCategory
+     */
+    public void setGroupCategory(String groupCategory) {
+        this.groupCategory = groupCategory;
+    }
+
+    /**
+     * Returns the bounding box of the sprite
+     * @return awt.Rectangle object
+     */
+    public abstract Rectangle getBounds();
 }

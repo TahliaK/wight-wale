@@ -7,11 +7,12 @@
             <mapY>0</mapY>
             <playerControlledItems>
                 <entry>
-                    <key>player</key>
+                    <key>skeleton</key>
                     <value>
-                        <id>player</id>
+                        <id>skeleton</id>
                         <visible>true</visible>
-                        <xPos>125</xPos>
+                        <groupCategory>player</groupCategory>
+                        <xPos>160</xPos>
                         <yPos>50</yPos>
                         <width>10</width>
                         <height>10</height>
@@ -30,6 +31,7 @@
                     <value>
                         <id>light</id>
                         <visible>true</visible>
+                        <groupCategory>scenery</groupCategory>
                         <xPos>125</xPos>
                         <yPos>50</yPos>
                         <width>24</width>
@@ -42,10 +44,11 @@
             </movingItems>
             <staticItems>
                 <entry>
-                    <key>background</key>
+                    <key>floor</key>
                     <value>
-                        <id>background</id>
+                        <id>floor</id>
                         <visible>true</visible>
+                        <groupCategory>background</groupCategory>
                         <xPos>0</xPos>
                         <yPos>0</yPos>
                         <width>500</width>
@@ -59,19 +62,38 @@
             <id>Map1Section2</id>
             <mapX>0</mapX>
             <mapY>1</mapY>
-            <playerControlledItems/>
+            <playerControlledItems>
+                <entry>
+                    <key>skeleton</key>
+                    <value>
+                        <id>skeleton</id>
+                        <visible>true</visible>
+                        <groupCategory>player</groupCategory>
+                        <xPos>125</xPos>
+                        <yPos>50</yPos>
+                        <width>10</width>
+                        <height>10</height>
+                        <imgFilename>Files/Images/Skeleton.png</imgFilename>
+                        <moveDistance>2</moveDistance>
+                        <ControlScheme>
+                            <CurrentControlScheme>ARROW_KEYS</CurrentControlScheme>
+                        </ControlScheme>
+                        <KeepBetweenAreas>false</KeepBetweenAreas>
+                    </value>
+                </entry>
+            </playerControlledItems>
             <movingItems>
                 <entry>
                     <key>skeleton</key>
                     <value>
                         <id>skeleton</id>
                         <visible>true</visible>
+                        <groupCategory>scenery</groupCategory>
                         <xPos>125</xPos>
                         <yPos>50</yPos>
                         <width>24</width>
                         <height>30</height>
                         <imgFilename>Files/Images/Skeleton.png</imgFilename>
-                        <dY>0</dY>
                         <moveDistance>2</moveDistance>
                     </value>
                 </entry>
@@ -82,6 +104,7 @@
                     <value>
                         <id>background</id>
                         <visible>true</visible>
+                        <groupCategory>background</groupCategory>
                         <xPos>0</xPos>
                         <yPos>0</yPos>
                         <width>500</width>

@@ -1,9 +1,8 @@
 package com.tk.wightwhale.graphics;
-import com.tk.wightwhale.actors.MovingObject;
-import com.tk.wightwhale.actors.PlayerControlledObject;
+
+import com.tk.wightwhale.actors.*;
 import com.tk.wightwhale.utils.Log;
 import com.tk.wightwhale.utils.XmlHandler;
-import com.tk.wightwhale.actors.GameObject;
 
 import java.awt.Graphics;
 import java.awt.event.ActionListener;
@@ -44,7 +43,7 @@ public class Board extends JPanel implements ActionListener{
         addKeyListener(keyListener);
         setFocusable(true);
         requestFocusInWindow();
-        _gController = GraphicsController.activeGraphicsController;
+        _gController = GraphicsController.GetController();
     }
 
     /**
@@ -61,7 +60,7 @@ public class Board extends JPanel implements ActionListener{
                 g.drawImage(obj.getImage(), obj.getxPos(), obj.getyPos(), null);
         }
         Map<String, MovingObject> m = _gController.getMovingItems();
-        for(Map.Entry<String, MovingObject> entry : m.entrySet()){ //loop renders all com.tk.wightwhale.graphics registered items
+        for(Map.Entry<String, MovingObject> entry : m.entrySet()){ //loop renders all graphics registered items
             MovingObject sprite = entry.getValue();
             if(sprite.isVisible())
                 g.drawImage(sprite.getImage(), sprite.getxPos(), sprite.getyPos(), null);
@@ -92,8 +91,11 @@ public class Board extends JPanel implements ActionListener{
      */
     private class TAdapter extends KeyAdapter {
 
+        private KeyEvent lastKeyEvent;
+
         @Override
         public void keyReleased(KeyEvent e) {
+            lastKeyEvent = null;
             for(Map.Entry<String, PlayerControlledObject> pcItem : _gController.getPlayerControlledItems().entrySet()){
                 pcItem.getValue().keyReleased(e);
             }
@@ -101,23 +103,25 @@ public class Board extends JPanel implements ActionListener{
 
         @Override
         public void keyPressed(KeyEvent e) {
-            for(Map.Entry<String, PlayerControlledObject> pcItem : _gController.getPlayerControlledItems().entrySet()){
-                PlayerControlledObject pc = pcItem.getValue();
-                pc.keyPressed(e);
-                if(e.getKeyChar() == 'p'){
-                    Log.send(Log.type.DEBUG, TAG, "Player location: " + pc.getxPos() + " | " + pc.getyPos());
-
-                }
-            }
-
             if(e.getKeyChar() == 'm'){ //debug - changes to second GameSegment
                 Log.send(Log.type.DEBUG, TAG, "Changed to mapLocation 0-0-1");
                 _gController.moveTo(0, 0, 1);
             }
 
-            if(e.getKeyChar() == '['){ //debug - prints player location
-                PlayerControlledObject pc2 = _gController.getPlayerControlledItemById("player");
-                Log.send(Log.type.DEBUG, TAG, pc2.toString());
+            if(lastKeyEvent != null) {
+                if (e.getKeyCode() == lastKeyEvent.getKeyCode()) {
+                    return; //removes duplicate key presses
+                }
+            }
+
+            lastKeyEvent = e;
+            for(Map.Entry<String, PlayerControlledObject> pcItem : _gController.getPlayerControlledItems().entrySet()){
+                PlayerControlledObject pc = pcItem.getValue();
+                pc.keyPressed(e);
+                if(e.getKeyChar() == 'p'){
+                    Log.send(Log.type.DEBUG, TAG, pc.toString());
+
+                }
             }
         }
     }
