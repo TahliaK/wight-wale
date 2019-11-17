@@ -1,9 +1,11 @@
 package com.tk.wightwhale;
 
+import com.tk.wightwhale.actors.MovingObject;
 import com.tk.wightwhale.graphics.Board;
 import com.tk.wightwhale.graphics.GraphicsController;
 import com.tk.wightwhale.levels.LevelController;
 import com.tk.wightwhale.utils.XmlHandler;
+import com.tk.wightwhale.utils.point2d;
 
 import java.awt.EventQueue;
 import javax.swing.JFrame;

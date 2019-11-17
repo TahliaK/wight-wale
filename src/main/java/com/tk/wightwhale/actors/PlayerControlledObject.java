@@ -45,8 +45,7 @@ public class PlayerControlledObject extends MovingObject {
     public PlayerControlledObject(MovingObject mo, ControlScheme.type controlScheme){
         dX = mo.dX;
         dY = mo.dY;
-        xPos = mo.xPos;
-        yPos = mo.yPos;
+        position = mo.position;
         //maxSpeed = mo.maxSpeed;
         stepSize = mo.stepSize;
         id = mo.id;
@@ -93,7 +92,7 @@ public class PlayerControlledObject extends MovingObject {
 
     @Override
     public String toString(){
-        String out = "Id=" + id + " Position:[" + xPos + ":" + yPos
+        String out = "Id=" + id + " Position:[" + position.x + ":" + position.y
                 + "] Visible: " + visible + " Image filename: " + imgFilename;
         return out;
     }

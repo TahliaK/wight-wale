@@ -2,6 +2,8 @@ package com.tk.wightwhale.actors;
 
 import com.tk.wightwhale.utils.ImageUtils;
 import com.tk.wightwhale.utils.Log;
+import com.tk.wightwhale.utils.point2d;
+import javafx.geometry.Point2D;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -26,12 +28,9 @@ public class GameObject extends AbstractGameObject {
     @XmlTransient
     protected Image image;  //sprite
 
-    /** X axis position **/
+    /** position **/
     @XmlElement
-    protected int xPos;
-    /** Y axis position **/
-    @XmlElement
-    protected int yPos; //position on Screen;
+    public point2d position;
     /** sprite width **/
     @XmlElement
     protected int width;
@@ -48,7 +47,7 @@ public class GameObject extends AbstractGameObject {
      * Default constructor @ position 0, size 10x10, no image.
      */
     public GameObject(){
-        xPos = 0; yPos = 0;
+        position = new point2d();
         width = 10; height = 10;
         image = null;
         id = null;
@@ -65,8 +64,7 @@ public class GameObject extends AbstractGameObject {
      * @param imageFile the filename to use for the image (png preferred)
      */
     public GameObject(int xPos, int yPos, int width, int height, String id, String imageFile){
-        this.xPos = xPos;
-        this.yPos = yPos;
+        this.position = new point2d(xPos, yPos);
         this.width = width;
         this.height = height;
         this.id = id;
@@ -133,19 +131,19 @@ public class GameObject extends AbstractGameObject {
     /* Getters / Setters */
 
     public int getxPos() {
-        return xPos;
+        return position.x;
     }
 
     public void setxPos(int xPos) {
-        this.xPos = xPos;
+        position.x = xPos;
     }
 
     public int getyPos() {
-        return yPos;
+        return position.y;
     }
 
     public void setyPos(int yPos) {
-        this.yPos = yPos;
+        position.y = yPos;
     }
 
     public int getWidth() {
@@ -181,11 +179,11 @@ public class GameObject extends AbstractGameObject {
 
     @Override
     public Rectangle getBounds() {
-        return new Rectangle(xPos, yPos, width, height);
+        return new Rectangle(position.x, position.y, width, height);
     }
 
     @Override
     public String toString(){
-        return "Id=" + id + " Pos=[" + xPos + ":" + yPos + "]";
+        return "Id=" + id + " Pos=[" + position.x + ":" + position.y + "]";
     }
 }

@@ -12,8 +12,10 @@
                         <id>skeleton</id>
                         <visible>true</visible>
                         <groupCategory>player</groupCategory>
-                        <xPos>160</xPos>
-                        <yPos>50</yPos>
+                        <position>
+                          <x>160</x>
+                          <y>50</y>
+                        </position>
                         <width>10</width>
                         <height>10</height>
                         <imgFilename>Files/Images/Skeleton.png</imgFilename>
@@ -32,8 +34,10 @@
                         <id>light</id>
                         <visible>true</visible>
                         <groupCategory>scenery</groupCategory>
-                        <xPos>125</xPos>
-                        <yPos>50</yPos>
+                        <position>
+                          <x>125</x>
+                          <y>50</y>
+                        </position>
                         <width>24</width>
                         <height>30</height>
                         <imgFilename>Files/Images/lightA01.png</imgFilename>
@@ -49,8 +53,10 @@
                         <id>floor</id>
                         <visible>true</visible>
                         <groupCategory>background</groupCategory>
-                        <xPos>0</xPos>
-                        <yPos>0</yPos>
+                        <position>
+                          <x>0</x>
+                          <y>0</y>
+                        </position>
                         <width>500</width>
                         <height>500</height>
                         <imgFilename>Files/Images/background.png</imgFilename>
@@ -69,8 +75,10 @@
                         <id>skeleton</id>
                         <visible>true</visible>
                         <groupCategory>player</groupCategory>
-                        <xPos>125</xPos>
-                        <yPos>50</yPos>
+                        <position>
+                          <x>160</x>
+                          <y>50</y>
+                        </position>
                         <width>10</width>
                         <height>10</height>
                         <imgFilename>Files/Images/Skeleton.png</imgFilename>
@@ -89,8 +97,10 @@
                         <id>skeleton</id>
                         <visible>true</visible>
                         <groupCategory>scenery</groupCategory>
-                        <xPos>125</xPos>
-                        <yPos>50</yPos>
+                        <position>
+                          <x>125</x>
+                          <y>50</y>
+                        </position>
                         <width>24</width>
                         <height>30</height>
                         <imgFilename>Files/Images/Skeleton.png</imgFilename>
@@ -105,8 +115,10 @@
                         <id>background</id>
                         <visible>true</visible>
                         <groupCategory>background</groupCategory>
-                        <xPos>0</xPos>
-                        <yPos>0</yPos>
+                        <position>
+                          <x>0</x>
+                          <y>0</y>
+                        </position>
                         <width>500</width>
                         <height>500</height>
                         <imgFilename>Files/Images/background2.png</imgFilename>

@@ -96,7 +96,31 @@ public class ImageUtils {
     public static boolean imageCollision(GameObject object1, GameObject object2) {
         boolean collision = false;
 
+        BufferedImage buf1 = toBufferedImage(object1.getImage());
+        BufferedImage buf2 = toBufferedImage(object2.getImage());
 
+        int obj1_x = object1.getxPos();
+        int obj1_y = object1.getyPos();
+        int obj2_x = object2.getxPos();
+        int obj2_y = object2.getyPos();
+
+        for(int scanX = 0; scanX < object1.getWidth(); scanX++){
+            for(int scanY = 0; scanY < object1.getHeight(); scanY++){
+                try {
+                    int pixel1 = buf1.getRGB(obj1_x - scanX, obj1_y - scanY);
+
+                    int pixel2 = buf2.getRGB(obj2_x - scanX, obj2_y - scanY);
+                    if (((pixel1 >> 24) & 0xFF) < 255 && ((pixel2 >> 24) & 0xFF) < 255) {
+                        collision = true;
+                    }
+
+                    if (collision)
+                        return collision;
+                } catch (ArrayIndexOutOfBoundsException e){
+                    Log.send(Log.type.ERROR, "ImageUtils.imageCollision", e.getMessage());
+                }
+            }
+        }
 
         return collision;
     }

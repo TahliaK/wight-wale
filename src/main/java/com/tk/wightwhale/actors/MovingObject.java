@@ -33,8 +33,8 @@ public class MovingObject extends GameObject {
      * Updates the current position based on current movement.
      */
     public void step() {
-        xPos += dX;
-        yPos += dY;
+        position.x += dX;
+        position.y += dY;
     }
 
     /**
