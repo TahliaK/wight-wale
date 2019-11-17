@@ -47,9 +47,10 @@ public class CollisionController {
                 GameObject obj = entry.getValue();
                 if(obj != mv) {
                     if(!obj.getGroupCategory().equals("background")) {
-                        if (obj.getBounds().intersects(mv.getBounds())) {
-                            Log.send(Log.type.DEBUG, TAG, "Bounding collision: " + mv.toString() + " WITH " + obj.toString());
-                            Log.send(Log.type.DEBUG, TAG, "Actual collision status: " + ImageUtils.imageCollision(obj, mv));
+                        if (obj.getBounds().intersects(mv.getBounds())) {   //bounding box
+                            if(ImageUtils.imageCollision(obj, mv)){         //transparency check
+                                Log.send(Log.type.DEBUG, TAG, "Collision: " + obj.getId() + " & " + mv.getId());
+                            }
                         } //endif
                     }
                 } //endif
@@ -58,9 +59,10 @@ public class CollisionController {
             for(Map.Entry<String, MovingObject> entry : movingItems.entrySet() ){
                 MovingObject obj = entry.getValue();
                 if(obj != mv) {
-                    if (obj.getBounds().intersects(mv.getBounds())) {
-                        Log.send(Log.type.DEBUG, TAG, "Bounding collision: " + mv.toString() + " WITH " + obj.toString());
-                        Log.send(Log.type.DEBUG, TAG, "Actual collision status: " + ImageUtils.imageCollision(obj, mv));
+                    if (obj.getBounds().intersects(mv.getBounds())) {   //bounding box
+                        if(ImageUtils.imageCollision(obj, mv)){         //transparency check
+                            Log.send(Log.type.DEBUG, TAG, "Collision: " + obj.getId() + " & " + mv.getId());
+                        }
                     } //endif
                 } //endif
             }//end moving items
@@ -68,9 +70,10 @@ public class CollisionController {
             for(Map.Entry<String, PlayerControlledObject> entry : PCItems.entrySet() ){
                 PlayerControlledObject obj = entry.getValue();
                 if(obj != mv) {
-                    if (obj.getBounds().intersects(mv.getBounds())) {
-                        Log.send(Log.type.DEBUG, TAG, "Bounding collision: " + mv.toString() + " WITH " + obj.toString());
-                        Log.send(Log.type.DEBUG, TAG, "Actual collision status: " + ImageUtils.imageCollision(obj, mv));
+                    if (obj.getBounds().intersects(mv.getBounds())) {   //bounding box
+                        if(ImageUtils.imageCollision(obj, mv)){         //transparency check
+                            Log.send(Log.type.DEBUG, TAG, "Collision: " + obj.getId() + " & " + mv.getId());
+                        }
                     } //endif
                 }
             }//end static items
