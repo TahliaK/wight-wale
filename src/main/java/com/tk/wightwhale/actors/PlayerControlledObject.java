@@ -1,5 +1,4 @@
 package com.tk.wightwhale.actors;
-
 import com.tk.wightwhale.utils.ControlScheme;
 
 import javax.xml.bind.annotation.*;

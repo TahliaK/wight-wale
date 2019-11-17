@@ -90,7 +90,7 @@ public class GraphicsController {
         //This may not be necessary but init here anyway:
         activeLevelController = LevelController.getActiveController();
         activeCollisionController = CollisionController.getActiveController();
-
+        activeCollisionController.importFromXml("CollisionInfo");
     }
 
     /**

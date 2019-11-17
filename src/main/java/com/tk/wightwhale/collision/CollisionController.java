@@ -4,14 +4,27 @@ import com.tk.wightwhale.actors.*;
 import com.tk.wightwhale.graphics.GraphicsController;
 import com.tk.wightwhale.utils.ImageUtils;
 import com.tk.wightwhale.utils.Log;
+import com.tk.wightwhale.utils.XmlHandler;
 
+import javax.xml.bind.annotation.*;
+import java.io.File;
+import java.util.ArrayList;
 import java.util.Map;
+import java.util.HashMap;
 
+@XmlAccessorType(XmlAccessType.FIELD)
+@XmlRootElement(name = "Collisions")
 public class CollisionController {
 
+    @XmlTransient
     public static final String TAG = "CollisionController";
+    @XmlTransient
     private static CollisionController activeController = null;
+    @XmlTransient
     private static GraphicsController _gController;
+
+    @XmlElement
+    private Map<String, Map<String, ArrayList<CollisionEvent>>> collisions;
 
     public static CollisionController getActiveController(){
         if(activeController == null){
@@ -23,6 +36,7 @@ public class CollisionController {
 
 
     public CollisionController() {
+        collisions = new HashMap<>();
         useActiveGraphicsController();
         activeController = this;
     }
@@ -79,5 +93,47 @@ public class CollisionController {
             }//end static items
         } // end action
     } // end step
+
+    public void importFromXml(String dir){
+        XmlHandler<CollisionEventDetails> importer = new XmlHandler<>(CollisionEventDetails.class);
+
+        File dirFile = new File(dir);
+        File[] directoryList = dirFile.listFiles();
+        int i;
+        if(directoryList != null){
+            for(File child : directoryList){
+                if(!child.isHidden() && child.getName().contains(".xml")){
+
+                    CollisionEventDetails collisionEvent = importer.readFromXml(dirFile.getPath(), child.getName());
+                    addCollisionEvent(collisionEvent);
+                }
+            }
+        }
+    }
+
+    private void addCollisionEvent(CollisionEventDetails importedCollision){
+        String movingGroup = importedCollision.getMovingGroup();
+        String otherGroup = importedCollision.getOtherGroup();
+
+        if(!collisions.containsKey(movingGroup)){   //if no entry for movingGroup, add to map
+            collisions.put(movingGroup, new HashMap<>());
+        }
+
+        if(!collisions.get(movingGroup).containsKey(otherGroup)){ //if no entry for otherGroup
+            ArrayList<CollisionEvent> list = new ArrayList<>(); //create list
+            list.add(importedCollision.toCollisionEvent()); //add import to list
+            collisions.get(movingGroup).put(otherGroup, list);  //add list to movingGroup map
+        } else {
+            ArrayList<CollisionEvent> list = collisions.get(movingGroup).get(otherGroup); //existing list
+            list.add(importedCollision.toCollisionEvent()); //add to
+        }
+    }
+
+    public static void exportACollision(){
+        XmlHandler<CollisionEventDetails> xml = new XmlHandler<>(CollisionEventDetails.class);
+
+        CollisionEventDetails ced = new CollisionEventDetails();
+        xml.writeToXml(ced, "", "collisionExample");
+    }
 
 }

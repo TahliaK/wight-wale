@@ -1,29 +1,38 @@
 package com.tk.wightwhale.collision;
 
 import com.tk.wightwhale.actors.*;
+import com.tk.wightwhale.utils.Log;
 
+import javax.xml.bind.annotation.*;
+
+@XmlAccessorType(XmlAccessType.FIELD)
+@XmlRootElement
 public class CollisionEvent {
 
     //action codes
+    @XmlTransient
+    public static final String TAG = "CollisionEvent";
+    @XmlTransient
     public static final int INSTANT_STAT_CHANGE = 0;
+    @XmlTransient
     public static final int SLOW_STAT_CHANGE = 1;
 
+    @XmlElement
     protected CollisionType type;
-    protected String triggerGroup;
+    @XmlElement
     protected int actionCode;
+    @XmlElement
     protected int statEffect;
 
     public CollisionEvent(){
         type = CollisionType.BLOCK;
         actionCode = 0; statEffect = 0;
-        triggerGroup = null;
     }
 
-    public CollisionEvent(CollisionType type, int actionCode, int statEffect, String triggerGroup){
+    public CollisionEvent(CollisionType type, int actionCode, int statEffect){
         this.type = type;
         this.actionCode = actionCode;
         this.statEffect = statEffect;
-        this.triggerGroup = triggerGroup;
     }
 
     public CollisionType getType() {
@@ -50,11 +59,28 @@ public class CollisionEvent {
         this.statEffect = statEffect;
     }
 
-    public String getTriggerGroup() {
-        return triggerGroup;
+    public void execute(MovingObject movingObject, GameObject otherObject){
+        Log.send(Log.type.INFO, TAG, type.toString());
+        switch(type){
+            case BLOCK:
+                movingObject.setdX(0);
+                movingObject.setdY(0); //todo: pick correct axis
+                break;
+            case BOUNCE_BACK:
+                movingObject.setdX(movingObject.getdX() * -1);
+                movingObject.setdY(movingObject.getdY() * -1);
+                break;
+            case LOAD_AREA_TRIGGER:
+                //nada
+                break;
+            case EVENT:
+                executeEvent();
+                break;
+        }
     }
 
-    public void setTriggerGroup(String triggerGroup) {
-        this.triggerGroup = triggerGroup;
+    private void executeEvent(){
+        //todo: implement stat adjustment
     }
+
 }
