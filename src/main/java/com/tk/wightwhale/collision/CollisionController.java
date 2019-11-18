@@ -63,7 +63,8 @@ public class CollisionController {
                     if(!obj.getGroupCategory().equals("background")) {
                         if (obj.getBounds().intersects(mv.getBounds())) {   //bounding box
                             if(ImageUtils.imageCollision(obj, mv)){         //transparency check
-                                Log.send(Log.type.DEBUG, TAG, "Collision: " + obj.getId() + " & " + mv.getId());
+                                ArrayList<CollisionEvent> collisionEvents = getCollisionEventsFor(mv.getGroupCategory(), obj.getGroupCategory());
+                                executeCollisions(collisionEvents, mv, obj);
                             }
                         } //endif
                     }
@@ -75,7 +76,8 @@ public class CollisionController {
                 if(obj != mv) {
                     if (obj.getBounds().intersects(mv.getBounds())) {   //bounding box
                         if(ImageUtils.imageCollision(obj, mv)){         //transparency check
-                            Log.send(Log.type.DEBUG, TAG, "Collision: " + obj.getId() + " & " + mv.getId());
+                            ArrayList<CollisionEvent> collisionEvents = getCollisionEventsFor(mv.getGroupCategory(), obj.getGroupCategory());
+                            executeCollisions(collisionEvents, mv, obj);
                         }
                     } //endif
                 } //endif
@@ -86,8 +88,8 @@ public class CollisionController {
                 if(obj != mv) {
                     if (obj.getBounds().intersects(mv.getBounds())) {   //bounding box
                         if(ImageUtils.imageCollision(obj, mv)){         //transparency check
-                            Log.send(Log.type.DEBUG, TAG, "Collision: " + obj.getId() + " & " + mv.getId());
-                        }
+                            ArrayList<CollisionEvent> collisionEvents = getCollisionEventsFor(mv.getGroupCategory(), obj.getGroupCategory());
+                            executeCollisions(collisionEvents, mv, obj);                        }
                     } //endif
                 }
             }//end static items
@@ -97,14 +99,13 @@ public class CollisionController {
     public void importFromXml(String dir){
         XmlHandler<CollisionEventDetails> importer = new XmlHandler<>(CollisionEventDetails.class);
 
-        File dirFile = new File(dir);
+        File dirFile = new File("Files/" + dir);
         File[] directoryList = dirFile.listFiles();
         int i;
         if(directoryList != null){
             for(File child : directoryList){
                 if(!child.isHidden() && child.getName().contains(".xml")){
-
-                    CollisionEventDetails collisionEvent = importer.readFromXml(dirFile.getPath(), child.getName());
+                    CollisionEventDetails collisionEvent = importer.readFromXml(dir, child.getName());
                     addCollisionEvent(collisionEvent);
                 }
             }
@@ -126,6 +127,24 @@ public class CollisionController {
         } else {
             ArrayList<CollisionEvent> list = collisions.get(movingGroup).get(otherGroup); //existing list
             list.add(importedCollision.toCollisionEvent()); //add to
+        }
+    }
+
+    private ArrayList<CollisionEvent> getCollisionEventsFor(String movingGroup, String otherGroup){
+        if(collisions.containsKey(movingGroup)){
+            if(collisions.get(movingGroup).containsKey(otherGroup)){
+                return collisions.get(movingGroup).get(otherGroup);
+            }
+        }
+
+        return null;
+    }
+
+    private void executeCollisions(ArrayList<CollisionEvent> collisions, MovingObject actor, GameObject other){
+        if(collisions != null) {
+            for (CollisionEvent entry : collisions) {
+                entry.execute(actor, other);
+            }
         }
     }
 

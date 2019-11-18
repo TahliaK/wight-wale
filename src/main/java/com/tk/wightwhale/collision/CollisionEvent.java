@@ -60,7 +60,7 @@ public class CollisionEvent {
     }
 
     public void execute(MovingObject movingObject, GameObject otherObject){
-        Log.send(Log.type.INFO, TAG, type.toString());
+        //Log.send(Log.type.INFO, TAG, type.toString());
         switch(type){
             case BLOCK:
                 movingObject.setdX(0);
