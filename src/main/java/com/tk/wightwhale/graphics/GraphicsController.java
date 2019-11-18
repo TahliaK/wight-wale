@@ -302,6 +302,14 @@ public class GraphicsController {
         return loadedArea.getPlayerControlledItemsById(id);
     }
 
+    public GameSegment getLoadedArea() {
+        return loadedArea;
+    }
+
+    public void setLoadedArea(GameSegment loadedArea) {
+        this.loadedArea = loadedArea;
+    }
+
     /**
      * Unloads current area and loads the specified level and gameSegment
      * @param levelNum level number (in import/addition order)

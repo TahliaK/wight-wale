@@ -5,6 +5,7 @@ import com.tk.wightwhale.utils.XmlHandler;
 
 import javax.xml.bind.annotation.*;
 import java.io.File;
+import java.util.Arrays;
 
 /**
  * Singleton which manages the information associated
@@ -77,7 +78,7 @@ public class LevelController {
                 }
             }
         }
-
+        Arrays.sort(lc.levels);
         setActiveController(lc);
         return lc;
     }
@@ -185,7 +186,7 @@ public class LevelController {
         XmlHandler<LevelMap> _x = new XmlHandler<>(LevelMap.class);
 
         for(int i = 0; i < l.levels.length; i++){
-            _x.writeToXml(l.levels[i], "", l.levels[i].getLevelId());
+            _x.writeToXml(l.levels[i], "", "ex_" + l.levels[i].getLevelName());
         }
     }
 

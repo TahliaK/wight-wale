@@ -3,7 +3,6 @@ package com.tk.wightwhale.actors;
 import com.tk.wightwhale.utils.ImageUtils;
 import com.tk.wightwhale.utils.Log;
 import com.tk.wightwhale.utils.point2d;
-import javafx.geometry.Point2D;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -114,7 +113,7 @@ public class GameObject extends AbstractGameObject {
             Log.send(Log.type.ERROR, TAG, "Failed to load image from file " + file.getName());
             _ex.printStackTrace();
         } catch (ClassCastException _ex){
-            Log.send(Log.type.ERROR, TAG, "Scaling image return failed (this should... really not happen. Contact the dev.");
+            Log.send(Log.type.ERROR, TAG, "Scaling image return failed (this should... really not happen. Contact the dev.)");
         }
         return loaded;
     }

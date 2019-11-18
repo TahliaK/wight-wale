@@ -149,5 +149,6 @@
     <maxHeight>2</maxHeight>
     <atX>0</atX>
     <atY>0</atY>
-    <levelId>Level1</levelId>
+    <levelId>0</levelId>
+    <levelName>Level1</levelName>
 </LevelMap>

@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <collisionEventDetails>
-    <type>BOUNCE_BACK</type>
+    <type>LOAD_AREA</type>
     <actionCode>0</actionCode>
     <statEffect>0</statEffect>
     <Collider>player</Collider>
-    <Collidee>scenery</Collidee>
+    <Collidee>backgroundCollisions</Collidee>
 </collisionEventDetails>
