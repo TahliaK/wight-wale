@@ -1,6 +1,8 @@
 package com.tk.wightwhale.utils;
 
 import com.tk.wightwhale.actors.GameObject;
+import com.tk.wightwhale.geometry.point2d_double;
+import com.tk.wightwhale.geometry.point2d_int;
 
 import java.awt.*;
 import java.awt.geom.AffineTransform;
@@ -120,5 +122,12 @@ public class ImageUtils {
         }
 
         return collision;
+    }
+
+    public static point2d_double scaleVector(point2d_int target, point2d_int source) {
+        return new point2d_double(
+                (double)target.x/source.x,
+                (double)target.y/source.y
+        );
     }
 }
