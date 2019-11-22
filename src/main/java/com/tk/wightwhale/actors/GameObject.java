@@ -105,7 +105,7 @@ public class GameObject extends AbstractGameObject {
             if(matchSpriteSizeToImage){
                 this.height = img.getHeight();
                 this.width = img.getWidth();
-            } else {
+            } else if(this.height != img.getHeight(null) || this.width != image.getWidth(null)){
                 this.image = ImageUtils.scale(img, height, width);
             }
             loaded = true;
@@ -123,7 +123,7 @@ public class GameObject extends AbstractGameObject {
      * @param matchSpriteSizeToImage    if true, sprite will be same size as png image
      * @return  true if success, false if failure
      */
-    public Boolean loadImageFile(Boolean matchSpriteSizeToImage){
+    public boolean loadImageFile(Boolean matchSpriteSizeToImage){
         return loadImageFrom(new File(imgFilename), matchSpriteSizeToImage);
     }
 

@@ -5,7 +5,12 @@ import com.tk.wightwhale.utils.ImageUtils;
 import com.tk.wightwhale.utils.Log;
 
 import java.awt.*;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
+import javax.imageio.ImageIO;
+import javax.swing.*;
 import javax.xml.bind.annotation.*;
 
 /**
@@ -21,8 +26,8 @@ public class BackgroundGameObject extends GameObject {
 
     @XmlTransient
     private ArrayList<Rectangle> offLimitsAreas;
-    @XmlElement
-    private RectangleInfo[] collisionDetails;
+    @XmlElement (name = "CollisionAreas")
+    private ArrayList<RectangleInfo> collisionDetails;
 
     public static BackgroundGameObject makeFrom(GameObject obj){
         BackgroundGameObject bgo = new BackgroundGameObject();
@@ -40,21 +45,22 @@ public class BackgroundGameObject extends GameObject {
     public BackgroundGameObject(){
         super();
         offLimitsAreas = new ArrayList<>();
-        collisionDetails = new RectangleInfo[5];
+        collisionDetails = new ArrayList<>();
     }
 
     public void initCollisions(){
-        collisionDetails = new RectangleInfo[10]; //todo: make dynamic?
-        for(int i = 0; i < collisionDetails.length; i++){
-            RectangleInfo r = collisionDetails[i];
+        offLimitsAreas.clear();
+        for(int i = 0; i < collisionDetails.size(); i++){
+            RectangleInfo r = collisionDetails.get(i);
             offLimitsAreas.add(new Rectangle(r.x, r.y, r.width, r.height));
         }
-        offLimitsAreas.add(new Rectangle(1, 2, 3, 4));
+        //offLimitsAreas.add(new Rectangle(1, 2, 3, 4));
         Log.send(Log.type.INFO, TAG, "Collisions initialized.");
     }
 
-    public void addOffLimitsArea(RectangleInfo area){
-        offLimitsAreas.add(new Rectangle(area.x, area.y, area.width, area.height));
+    public void addOffLimitsArea(int x, int y, int width, int height){
+        collisionDetails.add(new RectangleInfo(x, y, width, height));
+        offLimitsAreas.add(new Rectangle(x, y, width, height));
     }
 
     public ArrayList<Rectangle> getOffLimitsAreas(){
@@ -71,14 +77,14 @@ public class BackgroundGameObject extends GameObject {
         //scale the image
         this.image = ImageUtils.scale(img, width, height);
 
-        //scale the pending collisions
+        //scale the collisions details
         for(RectangleInfo r : collisionDetails){
             r.x = r.x * (int)scale.x;
             r.width = r.width * (int)scale.x;
             r.y = r.y * (int)scale.y;
             r.height = r.height * (int)scale.y;
         }
-        //scale the existing collisions
+        //scale the collision rectangles
         for (Rectangle r : offLimitsAreas){
             r.setBounds(
                     r.x * (int)scale.x,
@@ -87,6 +93,10 @@ public class BackgroundGameObject extends GameObject {
                     r.height * (int)scale.y
             );
         }
+    }
 
+    public boolean loadImageFrom(File file, boolean matchSpriteSizeToImage){
+        initCollisions();
+        return super.loadImageFrom(file, matchSpriteSizeToImage);
     }
 }

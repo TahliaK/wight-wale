@@ -107,18 +107,22 @@ public class ImageUtils {
 
         Rectangle r = a1.getBounds();
 
-        bufImg1 = bufImg1.getSubimage(r.x - object1.position.x, r.y - object1.position.y, r.width, r.height);
-        bufImg2 = bufImg2.getSubimage(r.x - object2.position.x, r.y - object2.position.y, r.width, r.height);
+        try {
+            bufImg1 = bufImg1.getSubimage(r.x - object1.position.x, r.y - object1.position.y, r.width, r.height);
+            bufImg2 = bufImg2.getSubimage(r.x - object2.position.x, r.y - object2.position.y, r.width, r.height);
 
-        if(bufImg1.getWidth()==bufImg2.getWidth() && bufImg1.getHeight()==bufImg2.getHeight()){
-            for (int x = 0; x < bufImg1.getWidth(); x++){
-                for(int y = 0; y < bufImg1.getHeight(); y++){
-                    if(bufImg1.getRGB(x, y) != 0 && bufImg2.getRGB(x, y) != 0){
-                        collision = true;
+            if (bufImg1.getWidth() == bufImg2.getWidth() && bufImg1.getHeight() == bufImg2.getHeight()) {
+                for (int x = 0; x < bufImg1.getWidth(); x++) {
+                    for (int y = 0; y < bufImg1.getHeight(); y++) {
+                        if (bufImg1.getRGB(x, y) != 0 && bufImg2.getRGB(x, y) != 0) {
+                            collision = true;
+                        }
                     }
                 }
-            }
 
+            }
+        } catch (java.awt.image.RasterFormatException e){
+            Log.send(Log.type.ERROR, "ImageUtils", "Collision calculation failed due to: " + e.getMessage());
         }
 
         return collision;

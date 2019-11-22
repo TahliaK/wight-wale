@@ -94,6 +94,10 @@ public class LevelMap implements Comparable<LevelMap> {
         return out;
     }
 
+    public GameSegment getCurrentSegment(){
+        return map[atX][atY];
+    }
+
     /**
      * Puts a gameSegment in the specified map location
      * @param x X axis position

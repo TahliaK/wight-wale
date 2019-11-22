@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <collisionEventDetails>
-    <type>BOUNCE_BACK</type>
+    <type>BLOCK</type>
     <actionCode>0</actionCode>
     <statEffect>0</statEffect>
     <Collider>player</Collider>

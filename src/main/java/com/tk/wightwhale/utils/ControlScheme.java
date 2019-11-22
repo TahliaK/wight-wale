@@ -118,6 +118,21 @@ public class ControlScheme {
         else if (keycode == KeyEvent.VK_DOWN) {
             pcO.setdY(pcO.getdY()+pcO.getStepSize());
         }
+
+        if(Math.abs(pcO.getdY()) > pcO.getStepSize()){ //Prevents excessive speed
+            if(pcO.getdY() > 0){
+                pcO.setdY(pcO.getStepSize());
+            } else {
+                pcO.setdY(-1*pcO.getStepSize());
+            }
+        }
+        if(Math.abs(pcO.getdX()) > pcO.getStepSize()){
+            if(pcO.getdX() > 0){
+                pcO.setdX(pcO.getStepSize());
+            } else {
+                pcO.setdX(-1*pcO.getStepSize());
+            }
+        }
     }
 
     private void arrowKeys_released(MovingObject pcO, int keycode){

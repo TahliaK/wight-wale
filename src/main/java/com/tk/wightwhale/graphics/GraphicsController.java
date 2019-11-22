@@ -1,5 +1,6 @@
 package com.tk.wightwhale.graphics;
 
+import com.tk.wightwhale.actors.BackgroundGameObject;
 import com.tk.wightwhale.actors.GameObject;
 import com.tk.wightwhale.actors.MovingObject;
 import com.tk.wightwhale.actors.PlayerControlledObject;
@@ -156,6 +157,14 @@ public class GraphicsController {
             loadedArea = levelMap.getSegment(0, 0);
         }
 
+        if(!loadedArea.getBackgroundItems().isEmpty()){
+            Map<String, BackgroundGameObject> b = loadedArea.getBackgroundItems();
+            for(Map.Entry<String, BackgroundGameObject> entry : b.entrySet()){
+                BackgroundGameObject obj = entry.getValue();
+                obj.loadImageFile(false);
+            }
+        }
+
         if (!loadedArea.getStaticItems().isEmpty()) {
             Map<String, GameObject> g = loadedArea.getStaticItems();
             for (Map.Entry<String, GameObject> entry : g.entrySet()) {
@@ -163,7 +172,6 @@ public class GraphicsController {
                 obj.loadImageFile(false);
             }
         }
-
 
         if (!loadedArea.getMovingItems().isEmpty()) {
             Map<String, MovingObject> m = loadedArea.getMovingItems();
@@ -245,6 +253,11 @@ public class GraphicsController {
         return loadedArea.registerPlayerControlled(pcObj);
     }
 
+    //todo: javadoc
+    public boolean registerBackground(BackgroundGameObject bgObj){
+        return loadedArea.registerBackground(bgObj);
+    }
+
     /**
      * Returns full Map of MovingObjects for current display area
      * @return success value; log output shows errors
@@ -302,6 +315,15 @@ public class GraphicsController {
         return loadedArea.getPlayerControlledItemsById(id);
     }
 
+    //todo: javadoc
+    public Map<String, BackgroundGameObject> getBackgroundItems(){
+        return loadedArea.getBackgroundItems();
+    }
+
+    public BackgroundGameObject getBackgroundItemById(String id){
+        return loadedArea.getBackgroundItemsById(id);
+    }
+
     public GameSegment getLoadedArea() {
         return loadedArea;
     }
@@ -333,6 +355,14 @@ public class GraphicsController {
         }
 
         if(gs != null){ //checks that segment was successfully retrieved
+
+            if(!loadedArea.getBackgroundItems().isEmpty()){
+                Map<String, BackgroundGameObject> b = loadedArea.getBackgroundItems();
+                for(Map.Entry<String, BackgroundGameObject> entry : b.entrySet()){
+                    BackgroundGameObject obj = entry.getValue();
+                    obj.unloadImage();
+                }
+            }
 
             if(!loadedArea.getStaticItems().isEmpty()){ //checks for static items to unload
                 Map<String, GameObject> m = loadedArea.getStaticItems();
@@ -461,5 +491,7 @@ public class GraphicsController {
     public void setLevelMap(LevelMap levelMap) {
         this.levelMap = levelMap;
     }
+
+
 }
 

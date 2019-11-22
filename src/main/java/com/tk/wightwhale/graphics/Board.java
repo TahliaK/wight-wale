@@ -53,17 +53,28 @@ public class Board extends JPanel implements ActionListener{
      */
     @Override
     public void paintComponent(Graphics g) {
+
+        Map<String, BackgroundGameObject> b = _gController.getBackgroundItems();
+        for(Map.Entry<String, BackgroundGameObject> entry : b.entrySet()){
+            BackgroundGameObject obj = entry.getValue();
+            if(obj.isVisible()){
+                g.drawImage(obj.getImage(), obj.getxPos(), obj.getyPos(), null);
+            }
+        }
+
         Map<String, GameObject> s = _gController.getStaticItems();
         for(Map.Entry<String, GameObject> entry : s.entrySet()){
             GameObject obj = entry.getValue();
-            if(obj.isVisible())
+            if(obj.isVisible()) {
                 g.drawImage(obj.getImage(), obj.getxPos(), obj.getyPos(), null);
+            }
         }
         Map<String, MovingObject> m = _gController.getMovingItems();
         for(Map.Entry<String, MovingObject> entry : m.entrySet()){ //loop renders all graphics registered items
             MovingObject sprite = entry.getValue();
-            if(sprite.isVisible())
+            if(sprite.isVisible()) {
                 g.drawImage(sprite.getImage(), sprite.getxPos(), sprite.getyPos(), null);
+            }
         }
         Map<String, PlayerControlledObject> p = _gController.getPlayerControlledItems();
         for(Map.Entry<String, PlayerControlledObject> entry : p.entrySet()){
@@ -120,7 +131,6 @@ public class Board extends JPanel implements ActionListener{
                 pc.keyPressed(e);
                 if(e.getKeyChar() == 'p'){
                     Log.send(Log.type.DEBUG, TAG, pc.toString());
-
                 }
             }
         }
