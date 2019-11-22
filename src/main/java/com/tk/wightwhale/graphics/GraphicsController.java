@@ -1,8 +1,10 @@
 package com.tk.wightwhale.graphics;
 
+import com.tk.wightwhale.actors.BackgroundGameObject;
 import com.tk.wightwhale.actors.GameObject;
 import com.tk.wightwhale.actors.MovingObject;
 import com.tk.wightwhale.actors.PlayerControlledObject;
+import com.tk.wightwhale.collision.CollisionController;
 import com.tk.wightwhale.levels.GameSegment;
 import com.tk.wightwhale.levels.LevelMap;
 import com.tk.wightwhale.levels.LevelController;
@@ -26,19 +28,26 @@ public class GraphicsController {
     private static final String TAG = "GraphicsController";
     /** Active graphicsController singleton **/
     @XmlTransient
-    public static GraphicsController activeGraphicsController = null;
+    private static GraphicsController activeGraphicsController = null;
     /** Active level map **/
     @XmlTransient
     public static LevelMap activeLevel = null;
     /** Active level controller  **/
     @XmlTransient
     public static LevelController activeLevelController = null;
+    /** Active collision controller **/
+    @XmlTransient
+    public static CollisionController activeCollisionController = null;
     /** XmlHandler to import settings in init() **/
     @XmlTransient
     private static XmlHandler<GcElements> settingsImporter = null;
     /** XmlHandler to import com.tk.wightwhale.levels **/
     @XmlTransient
     private static XmlHandler<LevelMap> levelImporter = null;
+
+    public static GraphicsController GetController(){
+        return activeGraphicsController;
+    }
 
     // Instance members
     /** GameSegment being displayed in com.tk.wightwhale.graphics **/
@@ -62,6 +71,7 @@ public class GraphicsController {
      * You MUST call "init" yourself if you use this
      */
     public GraphicsController(){
+        registerActive();
         stepSize = 1; //default time step, shouldn't really ever be used...
         gameRunning = true;
         settings = null;
@@ -80,7 +90,8 @@ public class GraphicsController {
         //levelMap = LevelMap.activeController;
         //This may not be necessary but init here anyway:
         activeLevelController = LevelController.getActiveController();
-
+        activeCollisionController = CollisionController.getActiveController();
+        activeCollisionController.importFromXml("CollisionInfo");
     }
 
     /**
@@ -146,6 +157,15 @@ public class GraphicsController {
             loadedArea = levelMap.getSegment(0, 0);
         }
 
+        if(!loadedArea.getBackgroundItems().isEmpty()){
+            Map<String, BackgroundGameObject> b = loadedArea.getBackgroundItems();
+            for(Map.Entry<String, BackgroundGameObject> entry : b.entrySet()){
+                BackgroundGameObject obj = entry.getValue();
+                obj.loadImageFile(false);
+                obj.initCollisions();
+            }
+        }
+
         if (!loadedArea.getStaticItems().isEmpty()) {
             Map<String, GameObject> g = loadedArea.getStaticItems();
             for (Map.Entry<String, GameObject> entry : g.entrySet()) {
@@ -153,7 +173,6 @@ public class GraphicsController {
                 obj.loadImageFile(false);
             }
         }
-
 
         if (!loadedArea.getMovingItems().isEmpty()) {
             Map<String, MovingObject> m = loadedArea.getMovingItems();
@@ -235,6 +254,11 @@ public class GraphicsController {
         return loadedArea.registerPlayerControlled(pcObj);
     }
 
+    //todo: javadoc
+    public boolean registerBackground(BackgroundGameObject bgObj){
+        return loadedArea.registerBackground(bgObj);
+    }
+
     /**
      * Returns full Map of MovingObjects for current display area
      * @return success value; log output shows errors
@@ -292,6 +316,23 @@ public class GraphicsController {
         return loadedArea.getPlayerControlledItemsById(id);
     }
 
+    //todo: javadoc
+    public Map<String, BackgroundGameObject> getBackgroundItems(){
+        return loadedArea.getBackgroundItems();
+    }
+
+    public BackgroundGameObject getBackgroundItemById(String id){
+        return loadedArea.getBackgroundItemsById(id);
+    }
+
+    public GameSegment getLoadedArea() {
+        return loadedArea;
+    }
+
+    public void setLoadedArea(GameSegment loadedArea) {
+        this.loadedArea = loadedArea;
+    }
+
     /**
      * Unloads current area and loads the specified level and gameSegment
      * @param levelNum level number (in import/addition order)
@@ -315,6 +356,14 @@ public class GraphicsController {
         }
 
         if(gs != null){ //checks that segment was successfully retrieved
+
+            if(!loadedArea.getBackgroundItems().isEmpty()){
+                Map<String, BackgroundGameObject> b = loadedArea.getBackgroundItems();
+                for(Map.Entry<String, BackgroundGameObject> entry : b.entrySet()){
+                    BackgroundGameObject obj = entry.getValue();
+                    obj.unloadImage();
+                }
+            }
 
             if(!loadedArea.getStaticItems().isEmpty()){ //checks for static items to unload
                 Map<String, GameObject> m = loadedArea.getStaticItems();
@@ -350,11 +399,13 @@ public class GraphicsController {
             for (Map.Entry<String, MovingObject> entry : m.entrySet()) {
                 MovingObject obj = entry.getValue();
                 obj.step();
+                activeCollisionController.step(obj);
             }
             Map<String, PlayerControlledObject> p = loadedArea.getPlayerControlledItems();
             for(Map.Entry<String, PlayerControlledObject> entry : p.entrySet()) {
                 PlayerControlledObject obj = entry.getValue();
                 obj.step();
+                activeCollisionController.step(obj);
             }
         }
     }
@@ -441,5 +492,7 @@ public class GraphicsController {
     public void setLevelMap(LevelMap levelMap) {
         this.levelMap = levelMap;
     }
+
+
 }
 

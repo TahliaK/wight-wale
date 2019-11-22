@@ -1,9 +1,14 @@
 package com.tk.wightwhale.utils;
 
-import java.awt.Image;
+import com.tk.wightwhale.actors.GameObject;
+import com.tk.wightwhale.geometry.point2d_double;
+import com.tk.wightwhale.geometry.point2d_int;
+
+import java.awt.*;
 import java.awt.geom.AffineTransform;
+import java.awt.geom.Area;
 import java.awt.image.BufferedImage;
-import java.awt.Graphics2D;
+import java.awt.image.DataBufferByte;
 
 public class ImageUtils {
 
@@ -42,5 +47,91 @@ public class ImageUtils {
         }
 
         return bImage;
+    }
+
+    /* Credit: https://stackoverflow.com/a/17175454/3252344 */
+    private static int[][] convertTo2DWithoutUsingGetRGB(BufferedImage image) {
+
+        final byte[] pixels = ((DataBufferByte) image.getRaster().getDataBuffer()).getData();
+        final int width = image.getWidth();
+        final int height = image.getHeight();
+        final boolean hasAlphaChannel = image.getAlphaRaster() != null;
+
+        int[][] result = new int[height][width];
+        if (hasAlphaChannel) {
+            final int pixelLength = 4;
+            for (int pixel = 0, row = 0, col = 0; pixel < pixels.length; pixel += pixelLength) {
+                int argb = 0;
+                argb += (((int) pixels[pixel] & 0xff) << 24); // alpha
+                argb += ((int) pixels[pixel + 1] & 0xff); // blue
+                argb += (((int) pixels[pixel + 2] & 0xff) << 8); // green
+                argb += (((int) pixels[pixel + 3] & 0xff) << 16); // red
+                result[row][col] = argb;
+                col++;
+                if (col == width) {
+                    col = 0;
+                    row++;
+                }
+            }
+        } else {
+            final int pixelLength = 3;
+            for (int pixel = 0, row = 0, col = 0; pixel < pixels.length; pixel += pixelLength) {
+                int argb = 0;
+                argb += -16777216; // 255 alpha
+                argb += ((int) pixels[pixel] & 0xff); // blue
+                argb += (((int) pixels[pixel + 1] & 0xff) << 8); // green
+                argb += (((int) pixels[pixel + 2] & 0xff) << 16); // red
+                result[row][col] = argb;
+                col++;
+                if (col == width) {
+                    col = 0;
+                    row++;
+                }
+            }
+        }
+
+        return result;
+    }
+
+    private static final int threshold = 255;
+
+    public static boolean imageCollision(GameObject object1, GameObject object2) {
+        boolean collision = false;
+
+        BufferedImage bufImg1 = toBufferedImage(object1.getImage());
+        BufferedImage bufImg2 = toBufferedImage(object2.getImage());
+
+        Area a1 = new Area(object1.getBounds());
+        Area a2 = new Area(object2.getBounds());
+        a1.intersect(a2);
+
+        Rectangle r = a1.getBounds();
+
+        try {
+            bufImg1 = bufImg1.getSubimage(r.x - object1.position.x, r.y - object1.position.y, r.width, r.height);
+            bufImg2 = bufImg2.getSubimage(r.x - object2.position.x, r.y - object2.position.y, r.width, r.height);
+
+            if (bufImg1.getWidth() == bufImg2.getWidth() && bufImg1.getHeight() == bufImg2.getHeight()) {
+                for (int x = 0; x < bufImg1.getWidth(); x++) {
+                    for (int y = 0; y < bufImg1.getHeight(); y++) {
+                        if (bufImg1.getRGB(x, y) != 0 && bufImg2.getRGB(x, y) != 0) {
+                            collision = true;
+                        }
+                    }
+                }
+
+            }
+        } catch (java.awt.image.RasterFormatException e){
+            Log.send(Log.type.ERROR, "ImageUtils", "Collision calculation failed due to: " + e.getMessage());
+        }
+
+        return collision;
+    }
+
+    public static point2d_double scaleVector(point2d_int target, point2d_int source) {
+        return new point2d_double(
+                (double)target.x/source.x,
+                (double)target.y/source.y
+        );
     }
 }

@@ -1,5 +1,8 @@
 package com.tk.wightwhale;
 
+import com.tk.wightwhale.actors.BackgroundGameObject;
+import com.tk.wightwhale.actors.GameObject;
+import com.tk.wightwhale.geometry.RectangleInfo;
 import com.tk.wightwhale.graphics.Board;
 import com.tk.wightwhale.graphics.GraphicsController;
 import com.tk.wightwhale.levels.LevelController;

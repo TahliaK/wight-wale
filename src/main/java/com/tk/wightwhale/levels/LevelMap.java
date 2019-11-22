@@ -6,7 +6,7 @@ import javax.xml.bind.annotation.*;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlRootElement (name = "LevelMap")
-public class LevelMap {
+public class LevelMap implements Comparable<LevelMap> {
 
     //global members
     /** Debug tag **/
@@ -32,9 +32,11 @@ public class LevelMap {
     /** Current loaded position in Y axis **/
     @XmlElement
     private int atY;
-    /** Level name String **/
+    /** Level int ID **/
     @XmlElement
-    private String levelId;
+    private int levelId;
+    @XmlElement
+    private String levelName;
 
     /**
      * Default constructor
@@ -47,7 +49,8 @@ public class LevelMap {
         atX = 0;
         atY = 0;
         map = null;
-        levelId = DEFAULT_LEVEL_ID;
+        levelId = -1;
+        levelName = "";
     }
 
     /**
@@ -56,7 +59,7 @@ public class LevelMap {
      * @param maxHeight maximum number of gameSegments on Y axis
      * @param id level ID
      */
-    public LevelMap(int maxWidth, int maxHeight, String id){
+    public LevelMap(int maxWidth, int maxHeight, int id){
         this();
         this.maxWidth = maxWidth;
         this.maxHeight = maxHeight;
@@ -89,6 +92,10 @@ public class LevelMap {
             }
         }
         return out;
+    }
+
+    public GameSegment getCurrentSegment(){
+        return map[atX][atY];
     }
 
     /**
@@ -143,7 +150,7 @@ public class LevelMap {
      * Note that com.tk.wightwhale.levels can only be retrieved by number, not ID, unlike GameObjects
      * @return level ID
      */
-    public String getLevelId() {
+    public int getLevelId() {
         return levelId;
     }
 
@@ -151,8 +158,28 @@ public class LevelMap {
      * Sets the level name / ID
      * @param levelId the ID / string name of the level
      */
-    public void setLevelId(String levelId) {
+    public void setLevelId(int levelId) {
         this.levelId = levelId;
     }
 
+    public String getLevelName() {
+        return levelName;
+    }
+
+    public void setLevelName(String levelName) {
+        this.levelName = levelName;
+    }
+
+    @Override
+    public int compareTo(LevelMap o) {
+        int comparison = 0;
+
+        if(o.levelId > this.levelId){
+            comparison = -1;
+        } else if (o.levelId < this.levelId){
+            comparison = 1;
+        }
+
+        return comparison;
+    }
 }

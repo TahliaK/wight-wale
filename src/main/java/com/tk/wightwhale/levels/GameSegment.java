@@ -1,6 +1,7 @@
 package com.tk.wightwhale.levels;
 
 //For loading from XML
+import com.tk.wightwhale.actors.BackgroundGameObject;
 import com.tk.wightwhale.actors.GameObject;
 import com.tk.wightwhale.actors.MovingObject;
 import com.tk.wightwhale.actors.PlayerControlledObject;
@@ -39,12 +40,15 @@ public class GameSegment {
     /** GameObjects in GameSegment - static, non-moving **/
     @XmlElement
     private Map<String, GameObject> staticItems;
+    @XmlElement
+    private Map<String, BackgroundGameObject> backgroundItems;
 
     public GameSegment(){
         id = "defaultId";
         playerControlledItems = new HashMap<>();
         movingItems = new HashMap<>();
         staticItems = new HashMap<>();
+        backgroundItems = new HashMap<>();
     }
 
     /**
@@ -72,6 +76,11 @@ public class GameSegment {
      */
     public PlayerControlledObject getPlayerControlledItemsById(String id) {
         return playerControlledItems.get(id);
+    }
+
+    //Todo: javadoc
+    public BackgroundGameObject getBackgroundItemsById(String id){
+        return backgroundItems.get(id);
     }
 
     /**
@@ -153,6 +162,32 @@ public class GameSegment {
     }
 
     /**
+     * Registers a Background object to this specific level
+     * @param bObj   the Background to be registered
+     * @return      true if success, log + false if failure
+     */
+    public boolean registerBackground(BackgroundGameObject bObj){
+        boolean result = false;
+
+        if(bObj.getId() == null){
+            Log.send(Log.type.ERROR, TAG, "Failed to register object; no ID assigned.");
+        } else if(backgroundItems.containsKey(bObj.getId())){
+            if(backgroundItems.containsValue(bObj)){
+                Log.send(Log.type.WARNING, TAG, "Failed to register " + bObj.getId() +
+                        ", this object is already registered.");
+            } else {
+                Log.send(Log.type.ERROR, TAG, "Failed to register " + bObj.getId() +
+                        ", ID already in use.");
+            }
+        } else {
+            backgroundItems.put(bObj.getId(), bObj);
+            Log.send(Log.type.INFO, TAG, "Successfully registered " + bObj.getId());
+            result = true;
+        }
+        return result;
+    }
+
+    /**
      * Gets all moving items
      * @return Map of MovingObjects
      */
@@ -176,6 +211,14 @@ public class GameSegment {
         return playerControlledItems;
     }
 
+    /**
+     * Gets all background items
+     * @return Map of backgroundGameObjects
+     */
+    public Map<String, BackgroundGameObject> getBackgroundItems() {
+        return backgroundItems;
+    }
+
     public void setStaticItems(Map<String, GameObject> staticItems) {
         this.staticItems = staticItems;
     }
@@ -186,6 +229,10 @@ public class GameSegment {
 
     public void setPlayerControlledItems(Map<String, PlayerControlledObject> playerControlledItems) {
         this.playerControlledItems = playerControlledItems;
+    }
+
+    public void setBackgroundItems(Map<String, BackgroundGameObject> backgroundItems) {
+        this.backgroundItems = backgroundItems;
     }
 
     public String getId() {
