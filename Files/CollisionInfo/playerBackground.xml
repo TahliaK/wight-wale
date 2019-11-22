@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <collisionEventDetails>
-    <type>LOAD_AREA</type>
+    <type>BLOCK</type>
     <actionCode>0</actionCode>
     <statEffect>0</statEffect>
     <Collider>player</Collider>
-    <Collidee>backgroundCollisions</Collidee>
+    <Collidee>background</Collidee>
 </collisionEventDetails>

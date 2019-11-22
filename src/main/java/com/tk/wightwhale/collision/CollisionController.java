@@ -7,6 +7,7 @@ import com.tk.wightwhale.utils.Log;
 import com.tk.wightwhale.utils.XmlHandler;
 
 import javax.xml.bind.annotation.*;
+import java.awt.*;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Map;
@@ -22,6 +23,8 @@ public class CollisionController {
     private static CollisionController activeController = null;
     @XmlTransient
     private static GraphicsController _gController;
+    @XmlTransient
+    private static Rectangle borders;
 
     @XmlElement
     private Map<String, Map<String, ArrayList<CollisionEvent>>> collisions;
@@ -56,6 +59,28 @@ public class CollisionController {
 
     public void step(MovingObject mv){
         if(_gController != null){
+            //Borders:
+            if(borders == null) {
+                borders = new Rectangle(0, 0, _gController.getWindowWidth(), _gController.getWindowHeight());
+            } else {
+                if(!borders.contains(mv.getBounds())){
+                    Log.send(Log.type.DEBUG, TAG, "Borders trigger.");
+                }
+            }
+
+            //Map:
+            Map<String, BackgroundGameObject> backgroundItems = _gController.getBackgroundItems();
+            for(Map.Entry<String, BackgroundGameObject> entry : backgroundItems.entrySet()){
+                BackgroundGameObject obj = entry.getValue();
+                for(Rectangle r : obj.getOffLimitsAreas()){
+                    if(mv.getBounds().intersects(r)){
+                        ArrayList<CollisionEvent> collisionEvents = getCollisionEventsFor(mv.getGroupCategory(), obj.getGroupCategory());
+                        executeCollisions(collisionEvents, mv, obj);
+                    }
+                }
+            }
+
+            //Non-moving items:
             Map<String, GameObject> staticItems = _gController.getStaticItems();
             for(Map.Entry<String, GameObject> entry : staticItems.entrySet() ){
                 GameObject obj = entry.getValue();
@@ -70,6 +95,8 @@ public class CollisionController {
                     }
                 } //endif
             }//end static items
+
+            //Moving items
             Map<String, MovingObject> movingItems = _gController.getMovingItems();
             for(Map.Entry<String, MovingObject> entry : movingItems.entrySet() ){
                 MovingObject obj = entry.getValue();
@@ -82,6 +109,8 @@ public class CollisionController {
                     } //endif
                 } //endif
             }//end moving items
+
+            //Player controlled items
             Map<String, PlayerControlledObject> PCItems = _gController.getPlayerControlledItems();
             for(Map.Entry<String, PlayerControlledObject> entry : PCItems.entrySet() ){
                 PlayerControlledObject obj = entry.getValue();
@@ -93,7 +122,7 @@ public class CollisionController {
                     } //endif
                 }
             }//end static items
-        } // end action
+        } // end if
     } // end step
 
     public void importFromXml(String dir){

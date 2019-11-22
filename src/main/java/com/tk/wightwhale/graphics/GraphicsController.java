@@ -162,6 +162,7 @@ public class GraphicsController {
             for(Map.Entry<String, BackgroundGameObject> entry : b.entrySet()){
                 BackgroundGameObject obj = entry.getValue();
                 obj.loadImageFile(false);
+                obj.initCollisions();
             }
         }
 
