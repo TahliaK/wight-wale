@@ -21,26 +21,16 @@ import javax.xml.bind.annotation.*;
 @XmlRootElement
 public class BackgroundGameObject extends GameObject {
 
+    /** Debug tag **/
     @XmlTransient
     private static final String TAG = "BackgroundGameObject";
 
+    /** Additional collision areas for background / environment **/
     @XmlTransient
     private ArrayList<Rectangle> offLimitsAreas;
+    /** Collision details for XML import / export **/
     @XmlElement (name = "CollisionAreas")
     private ArrayList<RectangleInfo> collisionDetails;
-
-    public static BackgroundGameObject makeFrom(GameObject obj){
-        BackgroundGameObject bgo = new BackgroundGameObject();
-        bgo.id = obj.id;
-        bgo.visible = obj.visible;
-        bgo.groupCategory = obj.groupCategory;
-        bgo.position = obj.position;
-        bgo.image = obj.image;
-        bgo.imgFilename = obj.imgFilename;
-        bgo.height = obj.height;
-        bgo.width = obj.width;
-        return bgo;
-    }
 
     public BackgroundGameObject(){
         super();
@@ -48,30 +38,80 @@ public class BackgroundGameObject extends GameObject {
         collisionDetails = new ArrayList<>();
     }
 
+    /**
+     * Clears collisions and re-creates from collisionDetails
+     */
     public void initCollisions(){
-        offLimitsAreas.clear();
-        for(int i = 0; i < collisionDetails.size(); i++){
-            RectangleInfo r = collisionDetails.get(i);
-            offLimitsAreas.add(new Rectangle(r.x, r.y, r.width, r.height));
+        if(offLimitsAreas.size() != collisionDetails.size()) {
+            offLimitsAreas.clear();
+            for (int i = 0; i < collisionDetails.size(); i++) {
+                RectangleInfo r = collisionDetails.get(i);
+                offLimitsAreas.add(new Rectangle(r.x, r.y, r.width, r.height));
+            }
         }
-        //offLimitsAreas.add(new Rectangle(1, 2, 3, 4));
+        //offLimitsAreas.add(new Rectangle(0, 100, 200, 200));
         Log.send(Log.type.INFO, TAG, "Collisions initialized.");
     }
 
+    /**
+     * Manually adds rectangular a collision area
+     * @param x X position of top-left corner
+     * @param y Y position of top-left corner
+     * @param width width of the rectangle
+     * @param height    height of the rectangle
+     */
     public void addOffLimitsArea(int x, int y, int width, int height){
         collisionDetails.add(new RectangleInfo(x, y, width, height));
         offLimitsAreas.add(new Rectangle(x, y, width, height));
     }
 
+    /**
+     * Returns Awt.Rectangle collision area list
+     * @return ArrayList of Java.Awt.Rectangle
+     */
     public ArrayList<Rectangle> getOffLimitsAreas(){
         return offLimitsAreas;
     }
 
-    protected void scale(Image img){
+    /**
+     * Overrid loadImage function which includes scaling of the collisionAreas
+     * @param file  File containing the image
+     * @param matchSpriteSizeToImage    if true, sprite will be same size as png image
+     * @return
+     */
+    @Override
+    public boolean loadImageFrom(File file, Boolean matchSpriteSizeToImage){
+        boolean loaded = false;
+        try {
+            BufferedImage img = ImageIO.read(file);
+            imgFilename = file.getPath();
+            ImageIcon ii = new ImageIcon(img); // is imageIcon even needed here? answer: yes
+            this.image = ii.getImage();
+            if(matchSpriteSizeToImage){
+                this.height = img.getHeight();
+                this.width = img.getWidth();
+            } else if(this.height != img.getHeight(null) || this.width != image.getWidth(null)){
+                this.image = scale(img);
+            }
+            loaded = true;
+        } catch (IOException _ex){
+            Log.send(Log.type.ERROR, TAG, "Failed to load image from file " + file.getName());
+            _ex.printStackTrace();
+        } catch (ClassCastException _ex){
+            Log.send(Log.type.ERROR, TAG, "Scaling image return failed (this should... really not happen. Contact the dev.)");
+        }
+        return loaded;
+    }
+
+    /**
+     * Scales image & collisionAreas together
+     * @param img
+     */
+    protected Image scale(Image img){
         //calculate scale - must come before image scaling;
         point2d_double scale = ImageUtils.scaleVector(
-                new point2d_int(image.getWidth(null), image.getHeight(null)),
-                new point2d_int(width, height)
+                new point2d_int(width, height),
+                new point2d_int(image.getWidth(null), image.getHeight(null))
         );
 
         //scale the image
@@ -79,20 +119,22 @@ public class BackgroundGameObject extends GameObject {
 
         //scale the collisions details
         for(RectangleInfo r : collisionDetails){
-            r.x = r.x * (int)scale.x;
-            r.width = r.width * (int)scale.x;
-            r.y = r.y * (int)scale.y;
-            r.height = r.height * (int)scale.y;
+            r.x =(int)(r.x * scale.x);
+            r.width = (int)(r.width * scale.x);
+            r.y = (int)(r.y * scale.y);
+            r.height = (int)(r.height * scale.y);
         }
         //scale the collision rectangles
         for (Rectangle r : offLimitsAreas){
             r.setBounds(
-                    r.x * (int)scale.x,
-                    r.y * (int)scale.y,
-                    r.width * (int)scale.x,
-                    r.height * (int)scale.y
+                    (int)(r.x * scale.x),
+                    (int)(r.y * scale.y),
+                    (int)(r.width * scale.x),
+                    (int)(r.height * scale.y)
             );
         }
+
+        return this.image;
     }
 
     public boolean loadImageFrom(File file, boolean matchSpriteSizeToImage){

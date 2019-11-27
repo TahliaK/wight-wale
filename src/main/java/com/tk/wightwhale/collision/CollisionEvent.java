@@ -3,8 +3,6 @@ package com.tk.wightwhale.collision;
 import com.tk.wightwhale.actors.*;
 import com.tk.wightwhale.graphics.GraphicsController;
 import com.tk.wightwhale.levels.GameSegment;
-import com.tk.wightwhale.levels.LevelController;
-import com.tk.wightwhale.levels.LevelMap;
 import com.tk.wightwhale.utils.Log;
 import com.tk.wightwhale.utils.point2d;
 
@@ -65,37 +63,39 @@ public class CollisionEvent {
     }
 
     public void execute(MovingObject movingObject, GameObject otherObject){
-        //Log.send(Log.type.INFO, TAG, type.toString());
-        point2d direction;
-        switch(type){
-            case BLOCK:
-                direction = getDirectionOfMovement(movingObject);
-                if(direction.x != 0){   //Horizontal
-                    movingObject.setxPos(movingObject.position.x - movingObject.getdX());
-                    movingObject.setdX(0);
-                }
-                if(direction.y != 0){   //Vertical
-                    movingObject.setyPos(movingObject.position.y - movingObject.getdY());
-                    movingObject.setdY(0);
-                }
-                break;
-            case BOUNCE_BACK: //todo: replace with actual animation/timed slow down
-                direction = getDirectionOfMovement(movingObject);
-                if(direction.x != 0){   //Horizontal
-                    movingObject.setxPos(movingObject.position.x - movingObject.getdX());
-                    movingObject.setdX(-1*movingObject.getdX());
-                }
-                if(direction.y != 0){   //Vertical
-                    movingObject.setyPos(movingObject.position.y - movingObject.getdY());
-                    movingObject.setdY(-1*movingObject.getdY());
-                }
-                break;
-            case LOAD_AREA_TRIGGER:
-                loadArea(movingObject);
-                break;
-            case EVENT:
-                executeEvent(movingObject);
-                break;
+        if(type != CollisionType.IGNORE) {
+            Log.send(Log.type.INFO, TAG, type.toString());
+            point2d direction;
+            switch (type) {
+                case BLOCK:
+                    direction = getDirectionOfMovement(movingObject);
+                    if (direction.x != 0) {   //Horizontal
+                        movingObject.setxPos(movingObject.position.x - movingObject.getdX());
+                        movingObject.setdX(0);
+                    }
+                    if (direction.y != 0) {   //Vertical
+                        movingObject.setyPos(movingObject.position.y - movingObject.getdY());
+                        movingObject.setdY(0);
+                    }
+                    break;
+                case BOUNCE_BACK: //todo: replace with actual animation/timed slow down
+                    direction = getDirectionOfMovement(movingObject);
+                    if (direction.x != 0) {   //Horizontal
+                        movingObject.setxPos(movingObject.position.x - movingObject.getdX());
+                        movingObject.setdX(-1 * movingObject.getdX());
+                    }
+                    if (direction.y != 0) {   //Vertical
+                        movingObject.setyPos(movingObject.position.y - movingObject.getdY());
+                        movingObject.setdY(-1 * movingObject.getdY());
+                    }
+                    break;
+                case LOAD_AREA_TRIGGER:
+                    loadArea(movingObject);
+                    break;
+                case EVENT:
+                    executeEvent(movingObject);
+                    break;
+            }
         }
     }
 

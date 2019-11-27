@@ -13,22 +13,35 @@ import java.util.ArrayList;
 import java.util.Map;
 import java.util.HashMap;
 
+/**
+ * Singleton class which detects and executes
+ * collisions for GameObjects
+ */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlRootElement(name = "Collisions")
 public class CollisionController {
 
+    /** Debug tag **/
     @XmlTransient
     public static final String TAG = "CollisionController";
+    /** Singleton pointer **/
     @XmlTransient
     private static CollisionController activeController = null;
+    /** Internal reference to the active graphicsController **/
     @XmlTransient
     private static GraphicsController _gController;
+    /** Stores the borders of the game - this is initialized from _gController**/
     @XmlTransient
     private static Rectangle borders;
 
+    /** Stores collisionEvents by triggering group types **/
     @XmlElement
     private Map<String, Map<String, ArrayList<CollisionEvent>>> collisions;
 
+    /**
+     * Gets the CollisionController singleton (initializes it if none exists)
+     * @return CollisionController
+     */
     public static CollisionController getActiveController(){
         if(activeController == null){
             activeController = new CollisionController();
@@ -38,12 +51,18 @@ public class CollisionController {
     }
 
 
+    /**
+     * Default constructor; automatically fetches graphicsController singleton
+     */
     public CollisionController() {
         collisions = new HashMap<>();
         useActiveGraphicsController();
         activeController = this;
     }
 
+    /**
+     * Sets graphicsController used to current active singleton
+     */
     public void useActiveGraphicsController(){
         _gController = GraphicsController.GetController();
         if(_gController == null){
@@ -53,10 +72,17 @@ public class CollisionController {
         }
     }
 
+    /**
+     * Sets this CollisionController as the active singleton
+     */
     public void setActiveController(){
         activeController = this;
     }
 
+    /**
+     * Calculates collision detection per step for a movingObject
+     * @param mv MovingObject for collision detection
+     */
     public void step(MovingObject mv){
         if(_gController != null){
             //Borders:
@@ -71,11 +97,13 @@ public class CollisionController {
             //Map:
             Map<String, BackgroundGameObject> backgroundItems = _gController.getBackgroundItems();
             for(Map.Entry<String, BackgroundGameObject> entry : backgroundItems.entrySet()){
+
                 BackgroundGameObject obj = entry.getValue();
                 for(Rectangle r : obj.getOffLimitsAreas()){
                     if(mv.getBounds().intersects(r)){
                         ArrayList<CollisionEvent> collisionEvents = getCollisionEventsFor(mv.getGroupCategory(), obj.getGroupCategory());
                         executeCollisions(collisionEvents, mv, obj);
+                        //Log.send(Log.type.DEBUG, TAG, "Map trigger @: " + mv.toString());
                     }
                 }
             }
@@ -125,6 +153,10 @@ public class CollisionController {
         } // end if
     } // end step
 
+    /**
+     * Imports collision details from the specified sub-directory in Files
+     * @param dir
+     */
     public void importFromXml(String dir){
         XmlHandler<CollisionEventDetails> importer = new XmlHandler<>(CollisionEventDetails.class);
 
@@ -141,6 +173,10 @@ public class CollisionController {
         }
     }
 
+    /**
+     * Adds a collision to the collisionController
+     * @param importedCollision CollisionEventDetails object
+     */
     private void addCollisionEvent(CollisionEventDetails importedCollision){
         String movingGroup = importedCollision.getMovingGroup();
         String otherGroup = importedCollision.getOtherGroup();
@@ -159,6 +195,12 @@ public class CollisionController {
         }
     }
 
+    /**
+     * Returns the collisionEvents for a particular pair of group tags
+     * @param movingGroup   group for the moving object
+     * @param otherGroup    group for the other object in the collision
+     * @return  ArrayList of CollisionEvents
+     */
     private ArrayList<CollisionEvent> getCollisionEventsFor(String movingGroup, String otherGroup){
         if(collisions.containsKey(movingGroup)){
             if(collisions.get(movingGroup).containsKey(otherGroup)){
@@ -169,6 +211,12 @@ public class CollisionController {
         return null;
     }
 
+    /**
+     * Executes an ArrayList of collisionEvents
+     * @param collisions    ArrayList of collision events to apply
+     * @param actor MovingObject in collision
+     * @param other Other GameObject in collision
+     */
     private void executeCollisions(ArrayList<CollisionEvent> collisions, MovingObject actor, GameObject other){
         if(collisions != null) {
             for (CollisionEvent entry : collisions) {
@@ -177,6 +225,9 @@ public class CollisionController {
         }
     }
 
+    /**
+     * Exports an example collision - todo: remove
+     */
     public static void exportACollision(){
         XmlHandler<CollisionEventDetails> xml = new XmlHandler<>(CollisionEventDetails.class);
 

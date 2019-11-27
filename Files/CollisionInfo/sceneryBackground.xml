@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<collisionEventDetails>
+    <type>IGNORE</type>
+    <actionCode>0</actionCode>
+    <statEffect>0</statEffect>
+    <Collider>scenery</Collider>
+    <Collidee>background</Collidee>
+</collisionEventDetails>

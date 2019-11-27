@@ -5,5 +5,6 @@ public enum CollisionType {
     BOUNCE_BACK,
     LOAD_AREA_TRIGGER,
     LOAD_LEVEL_TRIGGER,
-    EVENT
+    EVENT,
+    IGNORE
 }

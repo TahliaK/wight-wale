@@ -1,6 +1,7 @@
 package com.tk.wightwhale.graphics;
 
 import com.tk.wightwhale.actors.*;
+import com.tk.wightwhale.collision.CollisionController;
 import com.tk.wightwhale.utils.Log;
 import com.tk.wightwhale.utils.XmlHandler;
 
@@ -44,6 +45,7 @@ public class Board extends JPanel implements ActionListener{
         setFocusable(true);
         requestFocusInWindow();
         _gController = GraphicsController.GetController();
+
     }
 
     /**
