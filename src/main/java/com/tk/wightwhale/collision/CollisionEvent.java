@@ -8,60 +8,107 @@ import com.tk.wightwhale.utils.point2d;
 
 import javax.xml.bind.annotation.*;
 
+/**
+ * A collision event contains details +
+ * execution functions for one collision
+ */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlRootElement
 public class CollisionEvent {
 
     //action codes
+    /** Debug tag **/
     @XmlTransient
     public static final String TAG = "CollisionEvent";
+    /* todo: remove or figure these out */
     @XmlTransient
     public static final int INSTANT_STAT_CHANGE = 0;
     @XmlTransient
     public static final int SLOW_STAT_CHANGE = 1;
 
+    /** Collision type enum **/
     @XmlElement
     protected CollisionType type;
+    /** Integer actionCode **/
     @XmlElement
     protected int actionCode;
+    /** Integer statEffect code**/
     @XmlElement
     protected int statEffect;
 
+    /**
+     * Default Constructor; default type is BLOCK.
+     */
     public CollisionEvent(){
         type = CollisionType.BLOCK;
         actionCode = 0; statEffect = 0;
     }
 
+    /**
+     * Constructor
+     * @param type  Collision behaviour type
+     * @param actionCode    integer action code
+     * @param statEffect    stat effect value
+     */
     public CollisionEvent(CollisionType type, int actionCode, int statEffect){
         this.type = type;
         this.actionCode = actionCode;
         this.statEffect = statEffect;
     }
 
+    /**
+     * Returns the collision event type
+     * @return CollisionType enum
+     */
     public CollisionType getType() {
         return type;
     }
 
+    /**
+     * Sets the collision event type
+     * @param type CollisionType enum
+     */
     public void setType(CollisionType type) {
         this.type = type;
     }
 
+    /**
+     * Gets the action code
+     * @return int
+     */
     public int getActionCode() {
         return actionCode;
     }
 
+    /**
+     * Sets the action code
+     * @param actionCode int
+     */
     public void setActionCode(int actionCode) {
         this.actionCode = actionCode;
     }
 
+    /**
+     * Gets the stat effect value
+     * @return int
+     */
     public int getStatEffect() {
         return statEffect;
     }
 
+    /**
+     * Returns the stat effect value
+     * @param statEffect int
+     */
     public void setStatEffect(int statEffect) {
         this.statEffect = statEffect;
     }
 
+    /**
+     * Executes the collisionEvent on two objects
+     * @param movingObject  the mover object
+     * @param otherObject   the other object in the collision
+     */
     public void execute(MovingObject movingObject, GameObject otherObject){
         if(type != CollisionType.IGNORE) {
             Log.send(Log.type.INFO, TAG, type.toString());
@@ -99,6 +146,8 @@ public class CollisionEvent {
         }
     }
 
+    //Loads an area in the current level based on walking direction
+    //basically moves across the map with the player
     private void loadArea(MovingObject mv){
         point2d direction = getDirectionOfMovement(mv);
         GraphicsController graphicsController = GraphicsController.GetController();
@@ -107,10 +156,12 @@ public class CollisionEvent {
                 gs.getMapX()+direction.x, gs.getMapY()+direction.y);
     }
 
+    //Executes event, todo
     private void executeEvent(MovingObject mv){
         //todo: implement stat adjustment
     }
 
+    //Gets the direction of movement as a point2d value between -1 and 1
     private point2d getDirectionOfMovement(MovingObject mv){
         int xMov = mv.getdX();
         int yMov = mv.getdY();
