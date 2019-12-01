@@ -21,6 +21,8 @@ public class GameSegment {
     /** Debug tag **/
     @XmlTransient
     private static final String TAG = "GameSegment";
+    @XmlTransient
+    public static final String DEFAULT_ID = "defaultId";
 
     /** GameSegment ID string **/
     @XmlElement
@@ -44,7 +46,7 @@ public class GameSegment {
     private Map<String, BackgroundGameObject> backgroundItems;
 
     public GameSegment(){
-        id = "defaultId";
+        id = DEFAULT_ID;
         playerControlledItems = new HashMap<>();
         movingItems = new HashMap<>();
         staticItems = new HashMap<>();

@@ -12,6 +12,7 @@ import com.tk.wightwhale.utils.Log;
 import com.tk.wightwhale.utils.XmlHandler;
 
 import javax.xml.bind.annotation.*;
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -44,6 +45,8 @@ public class GraphicsController {
     /** XmlHandler to import com.tk.wightwhale.levels **/
     @XmlTransient
     private static XmlHandler<LevelMap> levelImporter = null;
+    @XmlTransient
+    private static Map<String, PlayerControlledObject> persistentObjects = null;
 
     public static GraphicsController GetController(){
         return activeGraphicsController;
@@ -78,7 +81,8 @@ public class GraphicsController {
         try{
             loadedArea = activeLevel.getSegment(0, 0);
         } catch (NullPointerException _ex){
-            loadedArea = new GameSegment();
+            Log.send(Log.type.WARNING, TAG, "GraphicsController game segment loading failed: " + _ex.getMessage());
+            loadedArea = new GameSegment();         //blank, default game segment on failure
         }
 
         if(settingsImporter == null)
@@ -87,11 +91,13 @@ public class GraphicsController {
         if(levelImporter == null)
             levelImporter = new XmlHandler<>(LevelMap.class);
 
-        //levelMap = LevelMap.activeController;
+        if(persistentObjects == null)
+            persistentObjects = new HashMap<>();
+
         //This may not be necessary but init here anyway:
-        activeLevelController = LevelController.getActiveController();
-        activeCollisionController = CollisionController.getActiveController();
-        activeCollisionController.importFromXml("CollisionInfo");
+        activeLevelController = LevelController.getActiveController();          //Initialise levelController
+        activeCollisionController = CollisionController.getActiveController();  //Initialise CollisionController
+        activeCollisionController.importFromXml("CollisionInfo");           //Import collisions in XML
     }
 
     /**
@@ -342,51 +348,70 @@ public class GraphicsController {
      */
     public GameSegment moveTo(int levelNum, int mapAreaX, int mapAreaY){
         GameSegment gs = null;
+        LevelMap lm;
+
+        gameRunning = false;
 
         if(activeLevelController == null){  //Checks that LevelController exists
             activeLevelController = LevelController.getActiveController();
             if(activeLevelController == null){  //no active level controller
                 Log.send(Log.type.ERROR, TAG, "Cannot move with no levelController created.");
+                return gs;
             }
         }
 
         if(levelNum < activeLevelController.levels.length && levelNum >= 0){    //checks that level number is in range
-            activeLevel = activeLevelController.levels[levelNum];
-            gs = activeLevel.getSegment(mapAreaX, mapAreaY);
+            lm = activeLevelController.levels[levelNum];
+            gs = lm.getSegment(mapAreaX, mapAreaY);
         }
 
-        if(gs != null){ //checks that segment was successfully retrieved
+        if(gs != null) { //if levelNum check succeeded
+            if (!gs.getId().equals(GameSegment.DEFAULT_ID) && !gs.getId().equals(loadedArea.getId())) { //checks that segment was successfully retrieved
 
-            if(!loadedArea.getBackgroundItems().isEmpty()){
-                Map<String, BackgroundGameObject> b = loadedArea.getBackgroundItems();
-                for(Map.Entry<String, BackgroundGameObject> entry : b.entrySet()){
-                    BackgroundGameObject obj = entry.getValue();
-                    obj.unloadImage();
+                if (!loadedArea.getBackgroundItems().isEmpty()) {
+                    Map<String, BackgroundGameObject> b = loadedArea.getBackgroundItems();
+                    for (Map.Entry<String, BackgroundGameObject> entry : b.entrySet()) {
+                        BackgroundGameObject obj = entry.getValue();
+                        obj.unloadImage();
+                    }
                 }
-            }
 
-            if(!loadedArea.getStaticItems().isEmpty()){ //checks for static items to unload
-                Map<String, GameObject> m = loadedArea.getStaticItems();
-                for (Map.Entry<String, GameObject> entry : m.entrySet()) {
-                    GameObject obj = entry.getValue();
-                    obj.unloadImage();
+                if (!loadedArea.getStaticItems().isEmpty()) { //checks for static items to unload
+                    Map<String, GameObject> m = loadedArea.getStaticItems();
+                    for (Map.Entry<String, GameObject> entry : m.entrySet()) {
+                        GameObject obj = entry.getValue();
+                        obj.unloadImage();
+                    }
                 }
-            }
 
-            if(!loadedArea.getMovingItems().isEmpty()){ //checks for moving items to unload
-                Map<String, MovingObject> m = loadedArea.getMovingItems();
-                for (Map.Entry<String, MovingObject> entry : m.entrySet()) {
-                    MovingObject obj = entry.getValue();
-                    obj.unloadImage();
+                if (!loadedArea.getMovingItems().isEmpty()) { //checks for moving items to unload
+                    Map<String, MovingObject> m = loadedArea.getMovingItems();
+                    for (Map.Entry<String, MovingObject> entry : m.entrySet()) {
+                        MovingObject obj = entry.getValue();
+                        obj.unloadImage();
+                    }
                 }
+
+                if(!loadedArea.getPlayerControlledItems().isEmpty()){
+                    Map<String, PlayerControlledObject> p = loadedArea.getPlayerControlledItems();
+                    for(Map.Entry<String, PlayerControlledObject> entry : p.entrySet()){
+                        PlayerControlledObject pc = entry.getValue();
+                        if(!pc.getPersistent()){
+                            pc.unloadImage();
+                        } else {
+                            pc.position.x = 100; pc.position.y = 100;
+                            gs.registerPlayerControlled(pc);
+                        }
+                    }
+                }
+
+                loadedArea = gs; //changes loaded area to retrieved gameSegment
+                loadLevelImages();  //loads images for new level
+                Log.send(Log.type.INFO, TAG, "Area " + loadedArea.getId() + " unloaded.");
             }
-
-            Log.send(Log.type.INFO, TAG, "Area " + loadedArea.getId() + " unloaded.");
-
-            loadedArea = gs; //changes loaded area to retrieved gameSegment
-            loadLevelImages();  //loads images for new level
         }
 
+        gameRunning = true;
         return gs;
     }
 

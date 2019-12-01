@@ -111,7 +111,7 @@ public class CollisionEvent {
      */
     public void execute(MovingObject movingObject, GameObject otherObject){
         if(type != CollisionType.IGNORE) {
-            Log.send(Log.type.INFO, TAG, type.toString());
+            //Log.send(Log.type.INFO, TAG, type.toString());
             point2d direction;
             switch (type) {
                 case BLOCK:
@@ -151,12 +151,27 @@ public class CollisionEvent {
     private void loadArea(MovingObject mv){
         point2d direction = getDirectionOfMovement(mv);
         GraphicsController graphicsController = GraphicsController.GetController();
-        GameSegment gs = graphicsController.getLoadedArea();
-        graphicsController.moveTo(graphicsController.getLevelMap().getLevelId(),
-                gs.getMapX()+direction.x, gs.getMapY()+direction.y);
+        GameSegment gameSegTemp = graphicsController.getLoadedArea();
+        point2d mapArea = new point2d(gameSegTemp.getMapX() + direction.x, gameSegTemp.getMapY() + direction.y);
+        gameSegTemp = graphicsController.moveTo(graphicsController.getLevelMap().getLevelId(),
+                mapArea.x, mapArea.y);
+
+        if(gameSegTemp == null) {   //If at edge of map square
+            Log.send(Log.type.DEBUG, TAG + "_loadArea", "Map edge.");
+            mv.position.y = mv.position.y - mv.getdY();
+            mv.position.x = mv.position.x - mv.getdX();
+        } else if (gameSegTemp.getId().equals(GameSegment.DEFAULT_ID)){  //If segment undefined
+            Log.send(Log.type.DEBUG, TAG + "_loadArea", "Segment undefined.");
+            mv.position.y = mv.position.y - mv.getdY();
+            mv.position.x = mv.position.x - mv.getdX();
+        } else {
+            Log.send(Log.type.DEBUG, TAG + "_loadArea",
+                    "GameSegment: ID=" + gameSegTemp.getId() + "Map coords: [" + gameSegTemp.getMapX() +
+                            ", " + gameSegTemp.getMapY() + "]" );
+        }
     }
 
-    //Executes event, todo
+    //Executes event todo
     private void executeEvent(MovingObject mv){
         //todo: implement stat adjustment
     }

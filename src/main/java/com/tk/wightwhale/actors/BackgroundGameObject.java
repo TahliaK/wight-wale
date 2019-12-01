@@ -48,9 +48,8 @@ public class BackgroundGameObject extends GameObject {
                 RectangleInfo r = collisionDetails.get(i);
                 offLimitsAreas.add(new Rectangle(r.x, r.y, r.width, r.height));
             }
+            Log.send(Log.type.INFO, TAG, "Collisions initialized.");
         }
-        //offLimitsAreas.add(new Rectangle(0, 100, 200, 200));
-        Log.send(Log.type.INFO, TAG, "Collisions initialized.");
     }
 
     /**
@@ -124,8 +123,12 @@ public class BackgroundGameObject extends GameObject {
             r.y = (int)(r.y * scale.y);
             r.height = (int)(r.height * scale.y);
         }
-        //scale the collision rectangles
-        for (Rectangle r : offLimitsAreas){
+
+        return this.image;
+    }
+
+    public void updateCollisionSize(Image img, point2d_double scale){
+        for(Rectangle r : offLimitsAreas){
             r.setBounds(
                     (int)(r.x * scale.x),
                     (int)(r.y * scale.y),
@@ -133,8 +136,6 @@ public class BackgroundGameObject extends GameObject {
                     (int)(r.height * scale.y)
             );
         }
-
-        return this.image;
     }
 
     public boolean loadImageFrom(File file, boolean matchSpriteSizeToImage){

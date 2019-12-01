@@ -79,78 +79,89 @@ public class CollisionController {
         activeController = this;
     }
 
+    public void resize(){
+        //todo: implement
+    }
+
     /**
      * Calculates collision detection per step for a movingObject
      * @param mv MovingObject for collision detection
      */
     public void step(MovingObject mv){
-        if(_gController != null){
-            //Borders:
-            if(borders == null) {
-                borders = new Rectangle(0, 0, _gController.getWindowWidth(), _gController.getWindowHeight());
-            } else {
-                if(!borders.contains(mv.getBounds())){
-                    Log.send(Log.type.DEBUG, TAG, "Borders trigger.");
-                }
-            }
-
-            //Map:
-            Map<String, BackgroundGameObject> backgroundItems = _gController.getBackgroundItems();
-            for(Map.Entry<String, BackgroundGameObject> entry : backgroundItems.entrySet()){
-
-                BackgroundGameObject obj = entry.getValue();
-                for(Rectangle r : obj.getOffLimitsAreas()){
-                    if(mv.getBounds().intersects(r)){
-                        ArrayList<CollisionEvent> collisionEvents = getCollisionEventsFor(mv.getGroupCategory(), obj.getGroupCategory());
-                        executeCollisions(collisionEvents, mv, obj);
-                        //Log.send(Log.type.DEBUG, TAG, "Map trigger @: " + mv.toString());
+        if(_gController != null) {
+            if (_gController.gameRunning) {
+                //Borders:
+                if (borders == null) {
+                    borders = new Rectangle(0, 0, _gController.getWindowWidth(), _gController.getWindowHeight()-22);
+                } else {
+                    if (!borders.contains(mv.getBounds())) {
+                        Log.send(Log.type.DEBUG, TAG, "Borders trigger.");
+                        ArrayList<CollisionEvent> collisionEvents = getCollisionEventsFor(mv.getGroupCategory(), "borders");
+                        executeCollisions(collisionEvents, mv, null);
                     }
                 }
-            }
 
-            //Non-moving items:
-            Map<String, GameObject> staticItems = _gController.getStaticItems();
-            for(Map.Entry<String, GameObject> entry : staticItems.entrySet() ){
-                GameObject obj = entry.getValue();
-                if(obj != mv) {
-                    if(!obj.getGroupCategory().equals("background")) {
+                //Map:
+                Map<String, BackgroundGameObject> backgroundItems = _gController.getBackgroundItems();
+                for (Map.Entry<String, BackgroundGameObject> entry : backgroundItems.entrySet()) {
+
+                    BackgroundGameObject obj = entry.getValue();
+                    for (Rectangle r : obj.getOffLimitsAreas()) {
+                        if (mv.getBounds().intersects(r)) {
+                            ArrayList<CollisionEvent> collisionEvents = getCollisionEventsFor(mv.getGroupCategory(), obj.getGroupCategory());
+                            executeCollisions(collisionEvents, mv, obj);
+                            //Log.send(Log.type.DEBUG, TAG, "Map trigger @: " + mv.toString());
+                        }
+                    }
+                }
+
+                //Non-moving items:
+                Map<String, GameObject> staticItems = _gController.getStaticItems();
+                for (Map.Entry<String, GameObject> entry : staticItems.entrySet()) {
+                    GameObject obj = entry.getValue();
+                    if (obj != mv) {
+                        if (!obj.getGroupCategory().equals("background")) {
+                            if (obj.getBounds().intersects(mv.getBounds())) {   //bounding box
+                                if (ImageUtils.imageCollision(obj, mv)) {         //transparency check
+                                    ArrayList<CollisionEvent> collisionEvents = getCollisionEventsFor(mv.getGroupCategory(), obj.getGroupCategory());
+                                    executeCollisions(collisionEvents, mv, obj);
+                                }
+                            } //endif
+                        }
+                    } //endif
+                }//end static items
+
+                //Moving items
+                Map<String, MovingObject> movingItems = _gController.getMovingItems();
+                for (Map.Entry<String, MovingObject> entry : movingItems.entrySet()) {
+                    MovingObject obj = entry.getValue();
+                    if (obj != mv) {
                         if (obj.getBounds().intersects(mv.getBounds())) {   //bounding box
-                            if(ImageUtils.imageCollision(obj, mv)){         //transparency check
+                            if (ImageUtils.imageCollision(obj, mv)) {         //transparency check
+                                ArrayList<CollisionEvent> collisionEvents = getCollisionEventsFor(mv.getGroupCategory(), obj.getGroupCategory());
+                                executeCollisions(collisionEvents, mv, obj);
+                            }
+                        } //endif
+                    } //endif
+                }//end moving items
+
+                //Player controlled items
+                Map<String, PlayerControlledObject> PCItems = _gController.getPlayerControlledItems();
+                for (Map.Entry<String, PlayerControlledObject> entry : PCItems.entrySet()) {
+                    PlayerControlledObject obj = entry.getValue();
+                    if (obj != mv) {
+                        if (obj.getBounds().intersects(mv.getBounds())) {   //bounding box
+                            if (ImageUtils.imageCollision(obj, mv)) {         //transparency check
                                 ArrayList<CollisionEvent> collisionEvents = getCollisionEventsFor(mv.getGroupCategory(), obj.getGroupCategory());
                                 executeCollisions(collisionEvents, mv, obj);
                             }
                         } //endif
                     }
-                } //endif
-            }//end static items
-
-            //Moving items
-            Map<String, MovingObject> movingItems = _gController.getMovingItems();
-            for(Map.Entry<String, MovingObject> entry : movingItems.entrySet() ){
-                MovingObject obj = entry.getValue();
-                if(obj != mv) {
-                    if (obj.getBounds().intersects(mv.getBounds())) {   //bounding box
-                        if(ImageUtils.imageCollision(obj, mv)){         //transparency check
-                            ArrayList<CollisionEvent> collisionEvents = getCollisionEventsFor(mv.getGroupCategory(), obj.getGroupCategory());
-                            executeCollisions(collisionEvents, mv, obj);
-                        }
-                    } //endif
-                } //endif
-            }//end moving items
-
-            //Player controlled items
-            Map<String, PlayerControlledObject> PCItems = _gController.getPlayerControlledItems();
-            for(Map.Entry<String, PlayerControlledObject> entry : PCItems.entrySet() ){
-                PlayerControlledObject obj = entry.getValue();
-                if(obj != mv) {
-                    if (obj.getBounds().intersects(mv.getBounds())) {   //bounding box
-                        if(ImageUtils.imageCollision(obj, mv)){         //transparency check
-                            ArrayList<CollisionEvent> collisionEvents = getCollisionEventsFor(mv.getGroupCategory(), obj.getGroupCategory());
-                            executeCollisions(collisionEvents, mv, obj);                        }
-                    } //endif
-                }
-            }//end static items
-        } // end if
+                }//end static items
+            } // end if
+        } else {
+            Log.send(Log.type.DEBUG, TAG, "Collisions suspended, game not running.");
+        }
     } // end step
 
     /**

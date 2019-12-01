@@ -9,7 +9,7 @@
                 <entry>
                     <key>skeleton</key>
                     <value>
-                        <id>skeleton</id>
+                        <id>skeleton_persistent</id>
                         <visible>true</visible>
                         <groupCategory>player</groupCategory>
                         <position>
@@ -23,7 +23,7 @@
                         <ControlScheme>
                             <CurrentControlScheme>ARROW_KEYS</CurrentControlScheme>
                         </ControlScheme>
-                        <KeepBetweenAreas>false</KeepBetweenAreas>
+                        <KeepBetweenAreas>true</KeepBetweenAreas>
                     </value>
                 </entry>
             </playerControlledItems>
@@ -76,7 +76,7 @@
                         <width>500</width>
                         <height>500</height>
                         <imgFilename>Files/Images/background.png</imgFilename>
-                        <CollisionAreas>
+                        <!--<CollisionAreas>
                             <x>0</x>
                             <y>0</y>
                             <width>52</width>
@@ -123,7 +123,7 @@
                             <y>233</y>
                             <width>73</width>
                             <height>240</height>
-                        </CollisionAreas>
+                        </CollisionAreas> -->
                     </value>
                 </entry>
             </backgroundItems>
@@ -136,7 +136,7 @@
                 <entry>
                     <key>skeleton</key>
                     <value>
-                        <id>skeleton</id>
+                        <id>skeleton2_slow</id>
                         <visible>true</visible>
                         <groupCategory>player</groupCategory>
                         <position>
